@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Лига прогнозистов</title>
+  <meta charset="UTF-8">
+  <title>Лига Прогнозистов</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,15 +12,12 @@
       margin: 0;
       padding: 15px;
     }
-
     h1 {
       margin-bottom: 10px;
     }
-
     .menu {
       margin-bottom: 10px;
     }
-
     .menu button {
       background: #45f3ff;
       border: none;
@@ -31,11 +28,6 @@
       font-size: 14px;
       color: #000;
     }
-
-    .menu button:hover {
-      filter: brightness(1.05);
-    }
-
     .screen {
       display: none;
       margin-top: 10px;
@@ -43,7 +35,6 @@
       padding: 15px;
       border-radius: 10px;
     }
-
     .club-btn {
       background: #243447;
       padding: 12px;
@@ -53,16 +44,13 @@
       cursor: pointer;
       border: 1px solid #2e3b4e;
     }
-
     .club-btn:hover {
       background: #2d3b4d;
     }
-
     .club-selected {
       border: 2px solid #45f3ff;
       background: #16202a;
     }
-
     button {
       border: none;
       padding: 7px 12px;
@@ -70,20 +58,16 @@
       cursor: pointer;
       margin-top: 5px;
     }
-
-    input,
-    select {
+    input, select {
       padding: 5px;
       border-radius: 5px;
       border: none;
       margin: 3px;
     }
-
     input[type="number"] {
       width: 70px;
       text-align: center;
     }
-
     .table-wrapper {
       max-height: 260px;
       overflow-y: auto;
@@ -91,119 +75,90 @@
       border-radius: 8px;
       border: 1px solid #2e3b4e;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
     }
-
-    th,
-    td {
+    th, td {
       border-bottom: 1px solid #34495e;
       padding: 6px;
     }
-
     th {
       font-weight: bold;
       position: sticky;
       top: 0;
       background: #1f2833;
     }
-
     .nick {
       color: #45f3ff;
       cursor: pointer;
     }
-
     .nick:hover {
       text-decoration: underline;
     }
-
-    .note {
-      font-size: 12px;
-      opacity: 0.8;
+    .rewards-list {
+      text-align: left;
+      max-width: 420px;
+      margin: 0 auto;
     }
-
     .badge {
       display: inline-block;
-      padding: 4px 7px;
-      border-radius: 8px;
-      background: #16202a;
-      margin: 3px;
-      font-size: 13px;
-    }
-
-    .badge span {
-      opacity: 0.8;
-    }
-
-    hr {
-      border: none;
-      border-top: 1px solid #34495e;
-      margin: 15px 0;
-    }
-
-    .admin-block-title {
-      margin-top: 5px;
-      margin-bottom: 10px;
-    }
-
-    .match-row {
-      margin: 6px 0;
-    }
-
-    .match-closed {
-      color: #ff7675;
-      font-size: 13px;
-    }
-
-    .match-deadline {
+      padding: 2px 6px;
+      border-radius: 6px;
       font-size: 12px;
-      opacity: 0.8;
+      margin-left: 4px;
+      background: #45f3ff;
+      color: #000;
     }
-
-    /* админские блоки по умолчанию скрыты */
     .admin-block {
       display: none;
-      margin-top: 15px;
+      margin-top: 20px;
       padding-top: 10px;
-      border-top: 1px dashed #455a64;
+      border-top: 1px solid #444;
       text-align: left;
-      font-size: 14px;
     }
-
-    .admin-block h3 {
+    .admin-block h3, .admin-block h4 {
       text-align: center;
     }
-
-    .admin-section-label {
-      font-weight: bold;
-      margin-top: 10px;
-      margin-bottom: 5px;
+    .admin-match {
+      border: 1px solid #34495e;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
     }
-
-    #adminToggleWrapper {
-      margin-top: 20px;
-      text-align: right;
+    .admin-small-btn {
       font-size: 12px;
-      opacity: 0.5;
-    }
-
-    #adminToggleWrapper button {
-      background: #111;
-      color: #fff;
       padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 11px;
+      margin-left: 5px;
+      background: #ff4f4f;
+      color: #fff;
     }
-
-    #adminToggleWrapper button:hover {
-      filter: brightness(1.1);
+    .note {
+      font-size: 12px;
+      color: #ccc;
+      margin-top: 6px;
+    }
+    .disabled-text {
+      color: #aaa;
+      font-size: 13px;
+    }
+    .strike-last {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .strike-last span {
+      font-weight: bold;
+    }
+    .admin-login {
+      margin-top: 25px;
+      font-size: 13px;
+      color: #bbb;
     }
   </style>
 </head>
 <body>
+
 <h1>⚽ Лига прогнозистов</h1>
 
 <div class="menu">
@@ -235,7 +190,7 @@
   <p>Любимый клуб: <span id="homeClub">—</span></p>
   <p>Твои очки: <span id="homePoints">0</span></p>
   <p>Твоё место: <span id="homePlace">—</span></p>
-  <p>Баланс: <span id="homeStars">0</span> ⭐</p>
+  <p>Баланс: <b><span id="homeStars">0</span> ⭐</b></p>
   <p>Билеты на розыгрыш: <span id="homeTickets">0</span></p>
 </div>
 
@@ -260,37 +215,25 @@
   <button onclick="submitPredictions()" id="predictionsButton">Отправить прогноз</button>
   <p id="predictionsResult"></p>
 
-  <!-- АДМИН: МАТЧИ ТУРА И РЕЗУЛЬТАТЫ -->
-  <div class="admin-block" id="adminLeagueBlock">
-    <h3 class="admin-block-title">Админ: матчи тура и результаты</h3>
-    <p class="note">
-      Здесь ты задаёшь реальные счёты и дедлайны. В этой версии всё считается только для тебя (MVP).
+  <!-- АДМИН: МАТЧИ И РЕЗУЛЬТАТЫ -->
+  <div id="adminMatchesBlock" class="admin-block">
+    <h3>Админ: результаты матчей и дедлайны</h3>
+    <p class="note">Здесь ты задаёшь реальные счёты и дедлайны по каждому матчу тура.</p>
+    <div id="adminMatchesContainer"></div>
+    <button onclick="saveAdminMatches()">💾 Сохранить результаты и дедлайны</button>
+
+    <h4 style="margin-top:18px;">Добавить матч в тур</h4>
+    <p>
+      Домашняя команда:
+      <input id="adminNewHome" placeholder="Дом">
+      Гости:
+      <input id="adminNewAway" placeholder="Гости">
     </p>
-
-    <div id="adminMatchesResults"></div>
-
-    <button onclick="adminSaveResultsAndCalc()">💾 Сохранить результаты и рассчитать тур</button>
-    <p id="adminLeagueStatus"></p>
-
-    <hr>
-
-    <div>
-      <div class="admin-section-label">Добавить матч в тур</div>
-      <p>
-        Домашняя команда:
-        <input type="text" id="adminAddHome" placeholder="Например, Реал Мадрид">
-      </p>
-      <p>
-        Гости:
-        <input type="text" id="adminAddAway" placeholder="Например, Барселона">
-      </p>
-      <p>
-        Дедлайн (формат 2025-11-30T21:45:00+03:00):
-        <input type="text" id="adminAddDeadline" style="width:240px;">
-      </p>
-      <button onclick="adminAddMatch()">Добавить матч</button>
-      <p class="note">Новый матч сразу появится в списке для всех.</p>
-    </div>
+    <p>
+      Дедлайн (формат 2025-11-30T21:00:00+03:00):<br>
+      <input id="adminNewDeadline" style="width:260px;">
+    </p>
+    <button onclick="addMatch()">➕ Добавить матч</button>
   </div>
 </div>
 
@@ -302,42 +245,9 @@
   <p>Очки: <span id="profilePoints">0</span></p>
   <p>Сыграно туров: <span id="profileTours">0</span></p>
   <p>Процент правильных исходов: <span id="profileAccuracy">0%</span></p>
-  <p>Лучший тур: <span id="profileBestRound">пока нет данных</span></p>
+  <p>Лучший тур: пока нет данных</p>
   <p>Баланс: <span id="profileStars">0</span> ⭐</p>
   <p>Билеты: <span id="profileTickets">0</span></p>
-
-  <h3>Твои награды</h3>
-  <div id="profileRewardsList">
-    Пока нет наград — всё впереди! 💪
-  </div>
-</div>
-
-<!-- НАГРАДЫ -->
-<div id="rewards" class="screen">
-  <h2>Награды и призы</h2>
-
-  <h3>Призы по итогам сезона</h3>
-  <p class="badge">🥇 1 место — футболка любимого клуба</p><br>
-  <p class="badge">🥈 2 место — билет на футбол в любом городе (до 5 000 ₽)</p><br>
-  <p class="badge">🥉 3 место — Telegram Premium на 3 месяца</p>
-
-  <hr>
-
-  <h3>Награды в течение сезона</h3>
-  <div>
-    <div class="badge">🎯 3 точных счёта подряд <span>+ билет</span></div>
-    <div class="badge">✅ Идеальный тур по исходам (100%) <span>+ билет</span></div>
-    <div class="badge">📅 10 сыгранных туров <span>+ билет</span></div>
-    <div class="badge">📅 50 сыгранных туров <span>+ 3 билета</span></div>
-    <div class="badge">📅 100 сыгранных туров <span>+ 5 билетов</span></div>
-    <div class="badge">👑 Король исходов (70%+ за сезон) <span>+ 5 билетов</span></div>
-  </div>
-
-  <hr>
-
-  <h3>Твои билеты</h3>
-  <p>Всего билетов: <b><span id="rewardsTickets">0</span></b></p>
-  <p class="note">Каждый билет — шанс на розыгрыш призов после сезона.</p>
 </div>
 
 <!-- ПРОФИЛЬ ИГРОКА ИЗ ТАБЛИЦЫ -->
@@ -352,21 +262,38 @@
   <button onclick="openScreen('table')">Назад к таблице</button>
 </div>
 
+<!-- НАГРАДЫ -->
+<div id="rewards" class="screen">
+  <h2>Награды сезона</h2>
+  <div class="rewards-list">
+    <p><b>🏆 1 место:</b> футболка любимого клуба</p>
+    <p><b>🥈 2 место:</b> билет на футбол в любом городе (до 5 000 ₽)</p>
+    <p><b>🥉 3 место:</b> Telegram Premium на 3 месяца</p>
+    <hr>
+    <p><b>🎟 Ачивки = билеты на розыгрыш:</b></p>
+    <ul>
+      <li>«100% первый тур» <span class="badge">+1 билет</span></li>
+      <li>«3 точных счёта подряд» <span class="badge">+2 билета</span></li>
+      <li>«Идеальный тур по исходам» <span class="badge">+3 билета</span></li>
+      <li>«10 туров» / «50 туров» / «100 туров» <span class="badge">+1 / +3 / +5</span></li>
+      <li>«Король исходов» (топ по % исходов) <span class="badge">+5 билетов</span></li>
+      <li>За выигрыш в режиме «Точный удар» <span class="badge">+1 билет</span></li>
+    </ul>
+    <p class="note">В этом MVP мы пока не считаем все ачивки автоматически — главное, что логика уже заложена. Позже перенесём на бэкенд.</p>
+  </div>
+</div>
+
 <!-- ТОЧНЫЙ УДАР -->
 <div id="strike" class="screen">
   <h2>🎯 Точный удар</h2>
 
-  <p>Баланс: <span id="strikeStars">0</span> ⭐</p>
+  <p>Баланс: <b><span id="strikeStars">0</span> ⭐</b></p>
 
-  <h3 id="strikeMatchTitle"></h3>
-  <p id="strikeMatchTime"></p>
-  <p id="strikeMatchDeadlineText" class="match-deadline"></p>
+  <div id="strikeActiveBlock">
+    <h3 id="strikeMatchTitle"></h3>
+    <p id="strikeMatchTime"></p>
+    <p id="strikeDeadlineInfo" class="note"></p>
 
-  <div id="strikeClosedMsg" class="match-closed" style="display:none;">
-    Приём ставок на этот матч закрыт.
-  </div>
-
-  <div id="strikeInputsBlock">
     <p>
       Твой прогноз счёта:
       <input type="number" id="strikeHome" min="0" placeholder="Дом">
@@ -386,40 +313,38 @@
 
     <button onclick="makeStrikeBet()">Сделать ставку</button>
     <p id="strikeStatus"></p>
+
+    <div class="strike-last" id="strikeLastInfo"></div>
   </div>
 
-  <hr>
+  <div id="strikeNoMatch" class="disabled-text" style="display:none;">
+    Админ ещё не выбрал матч для «Точного удара». Ждём объявление в лиге 🙂
+  </div>
 
-  <h3>Твоя последняя ставка</h3>
-  <p id="lastStrikeInfo">Пока нет ставок.</p>
+  <hr style="margin:15px 0;border-color:#444;">
 
   <!-- АДМИН: ТОЧНЫЙ УДАР -->
-  <div class="admin-block" id="adminStrikeBlock">
+  <div id="adminStrikeBlock" class="admin-block">
     <h3>Админ: «Точный удар»</h3>
-    <p class="note">
-      Здесь ты настраиваешь матч, дедлайн и считаешь последнюю ставку.
-    </p>
+    <p class="note">Здесь ты настраиваешь матч, дедлайн и считаешь последнюю ставку.</p>
 
-    <div class="admin-section-label">Матч и дедлайн</div>
+    <h4>Матч и дедлайн</h4>
     <p>
-      Дом:
-      <input type="text" id="adminStrikeHome" style="width:160px;">
-      Гости:
-      <input type="text" id="adminStrikeAway" style="width:160px;">
+      Дом: <input id="admStrikeHome" style="width:120px;">
+      Гости: <input id="admStrikeAway" style="width:120px;">
     </p>
     <p>
-      Описание времени (текст на экране):<br>
-      <input type="text" id="adminStrikeTimeText" style="width:260px;">
+      Описание времени (для текста на экране):<br>
+      <input id="admStrikeTimeText" style="width:260px;" placeholder="Например: Сегодня, 21:45 (МСК)">
     </p>
     <p>
       Дедлайн (формат 2025-11-30T21:45:00+03:00):<br>
-      <input type="text" id="adminStrikeDeadline" style="width:260px;">
+      <input id="admStrikeDeadline" style="width:260px;">
     </p>
-    <button onclick="adminSaveStrikeMatch()">Сохранить матч</button>
+    <button onclick="saveStrikeMatch()">💾 Сохранить матч</button>
+    <button class="admin-small-btn" onclick="clearStrikeMatch()">❌ Сбросить матч</button>
 
-    <hr>
-
-    <div class="admin-section-label">Расчёт последней ставки</div>
+    <h4 style="margin-top:18px;">Расчёт последней ставки</h4>
     <p>
       Фактический счёт:
       <input type="number" id="strikeRealHome" min="0" placeholder="Дом">
@@ -431,114 +356,103 @@
   </div>
 </div>
 
-<!-- КНОПКА АДМИНА -->
-<div id="adminToggleWrapper">
-  <button onclick="toggleAdmin()">🔒 Админ</button>
+<!-- ВХОД АДМИНА -->
+<div class="admin-login">
+  <p>Админ-панель (только для тебя):</p>
+  <input id="adminPasswordInput" type="password" placeholder="Пароль администратора" style="width:160px;">
+  <button onclick="adminLogin()">Войти</button>
+  <div id="adminLoginError" style="color:#ff7373;margin-top:4px;"></div>
 </div>
 
 <script>
   const currentUserName = "bombardir17";
 
-  // ============= НАСТРОЙКИ АДМИНА =============
-  const ADMIN_PASSWORD = "0235"; // новый пароль
-  const KEY_IS_ADMIN = "lp_v4_isAdmin";
+  // КЛЮЧИ localStorage
+  const KEY_CLUB           = "lp_v4_favoriteClub";
+  const KEY_STARS          = "lp_v4_balanceStars";
+  const KEY_TICKETS        = "lp_v4_tickets";
+  const KEY_USER_POINTS    = "lp_v4_userPoints";
+  const KEY_TOTAL_PREDS    = "lp_v4_totalPredictions";
+  const KEY_CORRECT_RES    = "lp_v4_correctResults";
+  const KEY_TOURS          = "lp_v4_totalTours";
+  const KEY_MATCHES        = "lp_v4_matches";
+  const KEY_STRIKE_CONFIG  = "lp_v4_strikeConfig";
+  const KEY_STRIKE_BETS    = "lp_v4_strikeBets";
 
-  let isAdmin = localStorage.getItem(KEY_IS_ADMIN) === "1";
-
-  // ============= КЛЮЧИ =============
-  const KEY_CLUB          = "lp_v4_favoriteClub";
-  const KEY_STARS         = "lp_v4_balanceStars";
-  const KEY_TICKETS       = "lp_v4_tickets";
-  const KEY_USER_POINTS   = "lp_v4_userPoints";
-  const KEY_TOTAL_PREDS   = "lp_v4_totalPredictions";
-  const KEY_CORRECT_RES   = "lp_v4_correctResults";
-  const KEY_TOURS         = "lp_v4_totalTours";
-  const KEY_MATCHES       = "lp_v4_matches";
-  const KEY_TOUR_PREDS    = "lp_v4_tourPredictions";
-  const KEY_TOUR_SENT     = "lp_v4_tourSent";
-  const KEY_LAST_STRIKE   = "lp_v4_lastStrikeBet";
-  const KEY_STRIKE_MATCH  = "lp_v4_strikeMatch";
-
-  // ============= СОСТОЯНИЕ =============
-  let favoriteClub = localStorage.getItem(KEY_CLUB) || null;
-  let balanceStars = parseInt(localStorage.getItem(KEY_STARS) || "0", 10);
-  let tickets      = parseInt(localStorage.getItem(KEY_TICKETS) || "0", 10);
-  let userPoints   = parseInt(localStorage.getItem(KEY_USER_POINTS) || "27", 10);
+  // СОСТОЯНИЕ
+  let favoriteClub   = localStorage.getItem(KEY_CLUB) || null;
+  let balanceStars   = parseInt(localStorage.getItem(KEY_STARS) || "0", 10);
+  let tickets        = parseInt(localStorage.getItem(KEY_TICKETS) || "0", 10);
+  let userPoints     = parseInt(localStorage.getItem(KEY_USER_POINTS) || "27", 10);
   let totalPredictions = parseInt(localStorage.getItem(KEY_TOTAL_PREDS) || "0", 10);
   let correctResults   = parseInt(localStorage.getItem(KEY_CORRECT_RES) || "0", 10);
   let totalTours       = parseInt(localStorage.getItem(KEY_TOURS) || "0", 10);
 
-  // Для "лучшего тура" просто сохраним максимум очков за тур
-  let bestTourPoints = parseInt(localStorage.getItem("lp_v4_bestTourPoints") || "0", 10);
+  let adminLoggedIn = false;
 
   // Матчи тура
-  let matches = JSON.parse(localStorage.getItem(KEY_MATCHES) || "null");
-  if (!matches) {
-    // стартовый демо-набор
-    matches = [
+  function defaultMatches() {
+    return [
       {
         id: 1,
         home: "Реал Мадрид",
         away: "Олимпиакос",
-        deadline: "2025-11-26T11:00:00+03:00",
-        realHome: null,
-        realAway: null
+        realHome: 2,
+        realAway: 1,
+        deadline: "2025-11-26T11:00:00+03:00"
       },
       {
         id: 2,
         home: "Барселона",
         away: "Манчестер Сити",
-        deadline: "2025-11-27T21:00:00+03:00",
-        realHome: null,
-        realAway: null
+        realHome: 3,
+        realAway: 2,
+        deadline: "2025-11-27T21:00:00+03:00"
       },
       {
         id: 3,
         home: "ПСЖ",
         away: "Бавария",
-        deadline: "2025-11-28T21:00:00+03:00",
-        realHome: null,
-        realAway: null
+        realHome: 1,
+        realAway: 1,
+        deadline: "2025-11-28T21:00:00+03:00"
       }
     ];
+  }
+
+  let matches = null;
+  try {
+    const stored = localStorage.getItem(KEY_MATCHES);
+    matches = stored ? JSON.parse(stored) : null;
+  } catch (e) {
+    matches = null;
+  }
+  if (!Array.isArray(matches)) {
+    matches = defaultMatches();
+  }
+
+  function saveMatches() {
     localStorage.setItem(KEY_MATCHES, JSON.stringify(matches));
   }
 
-  // Прогнозы на текущий тур (хранятся до расчёта)
-  let savedTourPredictions =
-    JSON.parse(localStorage.getItem(KEY_TOUR_PREDS) || "[]");
-  let tourSent = localStorage.getItem(KEY_TOUR_SENT) === "1";
-
-  // Матч для "точного удара"
-  let strikeMatch = JSON.parse(localStorage.getItem(KEY_STRIKE_MATCH) || "null");
-  if (!strikeMatch) {
-    strikeMatch = {
-      home: "Барселона",
-      away: "Реал Мадрид",
-      timeText: "Сегодня, 21:45 (МСК)",
-      deadline: "2025-11-26T21:30:00+03:00"
-    };
-    localStorage.setItem(KEY_STRIKE_MATCH, JSON.stringify(strikeMatch));
+  // Конфиг точного удара
+  let strikeConfig = null;
+  try {
+    const sc = localStorage.getItem(KEY_STRIKE_CONFIG);
+    strikeConfig = sc ? JSON.parse(sc) : null;
+  } catch (e) {
+    strikeConfig = null;
+  }
+  let strikeBets = [];
+  try {
+    const sb = localStorage.getItem(KEY_STRIKE_BETS);
+    strikeBets = sb ? JSON.parse(sb) : [];
+  } catch (e) {
+    strikeBets = [];
   }
 
-  let lastStrikeBet = JSON.parse(localStorage.getItem(KEY_LAST_STRIKE) || "null");
-
-  // Демонстрационный список игроков для таблицы
-  const playersBase = [
-    { name: "bombardir17", points: userPoints, club: favoriteClub || "Барселона", accuracy: 67, bestRound: "3 тур" },
-    { name: "kinggoals",   points: 18, club: "Реал Мадрид", accuracy: 42, bestRound: "1 тур" },
-    { name: "footlord",    points: 13, club: "ПСЖ", accuracy: 31, bestRound: "2 тур" },
-    { name: "predator",    points: 7,  club: "Манчестер Сити", accuracy: 21, bestRound: "1 тур" },
-    { name: "goalstorm",   points: 5,  club: "Барселона", accuracy: 10, bestRound: "-" },
-    { name: "xg_master",   points: 4,  club: "ПСЖ", accuracy: 9, bestRound: "-" },
-    { name: "clean_sheet", points: 3,  club: "Реал Мадрид", accuracy: 5, bestRound: "-" },
-    { name: "pressinggod", points: 2,  club: "Манчестер Сити", accuracy: 4, bestRound: "-" },
-    { name: "hat_trick",   points: 1,  club: "Интер Майами", accuracy: 3, bestRound: "-" },
-    { name: "latewinner",  points: 0,  club: "Барселона", accuracy: 0, bestRound: "-" }
-  ];
-
-  // =============== ОБЩИЕ ФУНКЦИИ ===============
-  function saveAll() {
+  // ОБЩЕЕ
+  function saveAllBase() {
     localStorage.setItem(KEY_CLUB, favoriteClub || "");
     localStorage.setItem(KEY_STARS, String(balanceStars));
     localStorage.setItem(KEY_TICKETS, String(tickets));
@@ -546,14 +460,11 @@
     localStorage.setItem(KEY_TOTAL_PREDS, String(totalPredictions));
     localStorage.setItem(KEY_CORRECT_RES, String(correctResults));
     localStorage.setItem(KEY_TOURS, String(totalTours));
-    localStorage.setItem("lp_v4_bestTourPoints", String(bestTourPoints));
-    localStorage.setItem(KEY_MATCHES, JSON.stringify(matches));
-    localStorage.setItem(KEY_TOUR_PREDS, JSON.stringify(savedTourPredictions));
-    localStorage.setItem(KEY_TOUR_SENT, tourSent ? "1" : "0");
-    localStorage.setItem(KEY_STRIKE_MATCH, JSON.stringify(strikeMatch));
-    if (lastStrikeBet) {
-      localStorage.setItem(KEY_LAST_STRIKE, JSON.stringify(lastStrikeBet));
-    }
+  }
+
+  function saveStrike() {
+    localStorage.setItem(KEY_STRIKE_CONFIG, JSON.stringify(strikeConfig));
+    localStorage.setItem(KEY_STRIKE_BETS, JSON.stringify(strikeBets));
   }
 
   function openScreen(id) {
@@ -562,9 +473,9 @@
   }
 
   function updateBalancesUI() {
-    document.getElementById("homeStars").innerText = balanceStars;
+    document.getElementById("homeStars").innerText    = balanceStars;
     document.getElementById("profileStars").innerText = balanceStars;
-    document.getElementById("strikeStars").innerText = balanceStars;
+    document.getElementById("strikeStars").innerText  = balanceStars;
   }
 
   function updateClubUI() {
@@ -576,58 +487,20 @@
   function updateTicketsUI() {
     document.getElementById("homeTickets").innerText    = tickets;
     document.getElementById("profileTickets").innerText = tickets;
-    document.getElementById("rewardsTickets").innerText = tickets;
   }
 
   function updatePointsAndStatsUI() {
     document.getElementById("homePoints").innerText    = userPoints;
     document.getElementById("profilePoints").innerText = userPoints;
     document.getElementById("profileTours").innerText  = totalTours;
-
     const acc = totalPredictions > 0
       ? Math.round((correctResults / totalPredictions) * 100)
       : 0;
     document.getElementById("profileAccuracy").innerText = acc + "%";
-
-    if (bestTourPoints > 0) {
-      document.getElementById("profileBestRound").innerText =
-        bestTourPoints + " очков — лучший тур";
-    }
-
-    rebuildRewardsList(acc);
   }
 
-  // =============== АДМИН-ПАНЕЛЬ ===============
-  function applyAdminVisibility() {
-    document.querySelectorAll(".admin-block").forEach(el => {
-      el.style.display = isAdmin ? "block" : "none";
-    });
-  }
-
-  function toggleAdmin() {
-    if (isAdmin) {
-      // выключить админ-режим
-      isAdmin = false;
-      localStorage.removeItem(KEY_IS_ADMIN);
-      applyAdminVisibility();
-      alert("Админ-режим выключен.");
-      return;
-    }
-
-    const pwd = prompt("Введите админ-пароль:");
-    if (pwd === ADMIN_PASSWORD) {
-      isAdmin = true;
-      localStorage.setItem(KEY_IS_ADMIN, "1");
-      applyAdminVisibility();
-      alert("Админ-режим включён.");
-    } else if (pwd !== null) {
-      alert("Неверный пароль.");
-    }
-  }
-
-  // =============== ВЫБОР КЛУБА ===============
+  // ВЫБОР КЛУБА
   let tempSelectedClub = null;
-
   function selectClub(elem, clubName) {
     document.querySelectorAll(".club-btn").forEach(c => c.classList.remove("club-selected"));
     elem.classList.add("club-selected");
@@ -638,14 +511,27 @@
   function confirmClub() {
     if (!tempSelectedClub) return;
     favoriteClub = tempSelectedClub;
-    saveAll();
+    saveAllBase();
     updateClubUI();
-    rebuildTable();
     document.getElementById("clubSelect").style.display = "none";
     openScreen("home");
+    rebuildTable();
   }
 
-  // =============== ТАБЛИЦА ===============
+  // ТАБЛИЦА
+  const playersBase = [
+    { name: "bombardir17", points: userPoints, club: "Барселона", accuracy: 67, bestRound: "3 тур" },
+    { name: "kinggoals",   points: 18, club: "Реал Мадрид", accuracy: 42, bestRound: "1 тур" },
+    { name: "footlord",    points: 13, club: "ПСЖ", accuracy: 31, bestRound: "2 тур" },
+    { name: "predator",    points: 7,  club: "Манчестер Сити", accuracy: 21, bestRound: "1 тур" },
+    { name: "goalstorm",   points: 5,  club: "Барселона", accuracy: 10, bestRound: "-" },
+    { name: "xg_master",   points: 4,  club: "ПСЖ", accuracy: 9, bestRound: "-" },
+    { name: "clean_sheet", points: 3,  club: "Реал Мадрид", accuracy: 5, bestRound: "-" },
+    { name: "pressinggod", points: 2,  club: "Манчестер Сити", accuracy: 4, bestRound: "-" },
+    { name: "hat_trick",   points: 1,  club: "Интер Майами", accuracy: 3, bestRound: "-" },
+    { name: "latewinner",  points: 0,  club: "Барселона", accuracy: 0, bestRound: "-" }
+  ];
+
   function getPlayersForTable() {
     const copy = playersBase.map(p => ({ ...p }));
     const me = copy.find(p => p.name === currentUserName);
@@ -656,9 +542,6 @@
         ? Math.round((correctResults / totalPredictions) * 100)
         : me.accuracy;
       me.accuracy = acc;
-      if (bestTourPoints > 0) {
-        me.bestRound = bestTourPoints + " очков";
-      }
     }
     copy.sort((a, b) => b.points - a.points);
     return copy;
@@ -701,179 +584,86 @@
     openScreen("playerModal");
   }
 
-  // =============== ПРОГНОЗЫ НА ТУР ===============
-  function buildMatchesUserUI() {
+  // ПРОГНОЗЫ
+  function isMatchOpen(m) {
+    if (!m.deadline) return true;
+    const now = new Date();
+    const dl = new Date(m.deadline);
+    return now < dl;
+  }
+
+  function buildMatchesUI() {
     const container = document.getElementById("matchesList");
     container.innerHTML = "";
-
-    const now = new Date();
-
     matches.forEach(m => {
-      const deadline = m.deadline ? new Date(m.deadline) : null;
-      const closed = deadline && now > deadline;
+      const open = isMatchOpen(m);
+      const div = document.createElement("div");
+      div.style.margin = "6px 0";
+      const deadlineText = m.deadline
+        ? `Дедлайн: ${m.deadline}`
+        : "Дедлайн не задан";
 
-      const row = document.createElement("div");
-      row.className = "match-row";
-
-      const pred = savedTourPredictions.find(p => p.id === m.id);
-
-      const homeVal = pred ? pred.home : "";
-      const awayVal = pred ? pred.away : "";
-
-      row.innerHTML = `
-        <div>
-          <b>${m.home} — ${m.away}</b>
-        </div>
-        <div style="margin:4px 0;">
-          ${
-            closed
-              ? `<span class="match-closed">Приём прогнозов закрыт</span>`
-              : `
-            <input type="number" id="pred-home-${m.id}" min="0" style="width:50px;" value="${homeVal}">
-            :
-            <input type="number" id="pred-away-${m.id}" min="0" style="width:50px;" value="${awayVal}">
-          `
-          }
-        </div>
-        <div class="match-deadline">
-          Дедлайн: ${m.deadline || "не задан"}
-        </div>
-      `;
-      container.appendChild(row);
-    });
-  }
-
-  function buildMatchesAdminResultsUI() {
-    const container = document.getElementById("adminMatchesResults");
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    matches.forEach(m => {
-      const block = document.createElement("div");
-      block.style.marginBottom = "10px";
-      block.innerHTML = `
-        <div class="admin-section-label">${m.home} — ${m.away}</div>
-        <div>Реальный счёт:
-          <input type="number" id="admin-real-home-${m.id}" min="0" style="width:50px;" value="${m.realHome ?? ""}">
+      if (open) {
+        div.innerHTML = `
+          ${m.home}
+          <input type="number" id="pred-home-${m.id}" min="0" style="width:50px;">
           :
-          <input type="number" id="admin-real-away-${m.id}" min="0" style="width:50px;" value="${m.realAway ?? ""}">
-        </div>
-        <div class="match-deadline">
-          Дедлайн: 
-          <input type="text" id="admin-deadline-${m.id}" style="width:220px;" value="${m.deadline || ""}">
-        </div>
-        <hr>
-      `;
-      container.appendChild(block);
+          <input type="number" id="pred-away-${m.id}" min="0" style="width:50px;">
+          ${m.away}
+          <div class="note">${deadlineText}</div>
+        `;
+      } else {
+        div.innerHTML = `
+          <b>${m.home} — ${m.away}</b>
+          <div class="disabled-text">Приём прогнозов закрыт</div>
+          <div class="note">${deadlineText}</div>
+        `;
+      }
+      container.appendChild(div);
     });
   }
+
+  let predictionsSent = false;
 
   function submitPredictions() {
-    const now = new Date();
-    let anyEntered = false;
-    const newPreds = [];
-
-    matches.forEach(m => {
-      const deadline = m.deadline ? new Date(m.deadline) : null;
-      const closed = deadline && now > deadline;
-
-      if (closed) return;
-
-      const homeInput = document.getElementById(`pred-home-${m.id}`);
-      const awayInput = document.getElementById(`pred-away-${m.id}`);
-      if (!homeInput || !awayInput) return;
-
-      const hStr = homeInput.value;
-      const aStr = awayInput.value;
-      if (hStr === "" || aStr === "") return;
-
-      anyEntered = true;
-      newPreds.push({
-        id: m.id,
-        home: parseInt(hStr, 10),
-        away: parseInt(aStr, 10)
-      });
-    });
-
-    if (!anyEntered) {
+    if (predictionsSent) {
       document.getElementById("predictionsResult").innerText =
-        "Сначала введи прогноз хотя бы для одного матча (и не после дедлайна).";
+        "Ты уже отправил прогноз на этот тур (демо).";
       return;
     }
 
-    savedTourPredictions = newPreds;
-    tourSent = true;
-    saveAll();
-
-    document.getElementById("predictionsButton").disabled = true;
-    document.getElementById("predictionsResult").innerText =
-      "Прогноз сохранён! Ждём завершения матчей и расчёта тура.";
-  }
-
-  function adminSaveResultsAndCalc() {
-    const status = document.getElementById("adminLeagueStatus");
-    if (!isAdmin) {
-      status.innerText = "Нет прав доступа.";
-      return;
-    }
-
-    // обновляем реальные счёты и дедлайны
-    matches.forEach(m => {
-      const rh = document.getElementById(`admin-real-home-${m.id}`);
-      const ra = document.getElementById(`admin-real-away-${m.id}`);
-      const dl = document.getElementById(`admin-deadline-${m.id}`);
-
-      if (rh && ra) {
-        const h = rh.value === "" ? null : parseInt(rh.value, 10);
-        const a = ra.value === "" ? null : parseInt(ra.value, 10);
-        m.realHome = isNaN(h) ? null : h;
-        m.realAway = isNaN(a) ? null : a;
-      }
-      if (dl) {
-        m.deadline = dl.value || null;
-      }
-    });
-
-    if (!savedTourPredictions.length) {
-      saveAll();
-      buildMatchesUserUI();
-      status.innerText = "Результаты сохранены, но прогнозов на этот тур пока нет.";
-      return;
-    }
-
-    // расчёт очков
     let gainedPoints = 0;
     let tourPredictions = 0;
-    let tourCorrectResults = 0;
-    const fav = favoriteClub;
 
-    savedTourPredictions.forEach(p => {
-      const m = matches.find(mm => mm.id === p.id);
-      if (!m || m.realHome == null || m.realAway == null) return;
+    matches.forEach(m => {
+      if (!isMatchOpen(m)) return; // на закрытый матч прогноз не принимаем
+
+      const hStr = document.getElementById(`pred-home-${m.id}`)?.value ?? "";
+      const aStr = document.getElementById(`pred-away-${m.id}`)?.value ?? "";
+      if (hStr === "" || aStr === "") return;
+
+      const ph = parseInt(hStr, 10);
+      const pa = parseInt(aStr, 10);
 
       tourPredictions++;
       totalPredictions++;
 
       let pts = 0;
-
-      if (p.home === m.realHome && p.away === m.realAway) {
+      if (ph === m.realHome && pa === m.realAway) {
         pts = 3;
-        tourCorrectResults++;
         correctResults++;
       } else {
         const realDiff = m.realHome - m.realAway;
-        const predDiff = p.home - p.away;
+        const predDiff = ph - pa;
         const realRes = realDiff === 0 ? 0 : (realDiff > 0 ? 1 : -1);
         const predRes = predDiff === 0 ? 0 : (predDiff > 0 ? 1 : -1);
         if (realRes === predRes) {
           pts = 1;
-          tourCorrectResults++;
           correctResults++;
         }
       }
 
-      if (fav && (m.home === fav || m.away === fav)) {
+      if (favoriteClub && (m.home === favoriteClub || m.away === favoriteClub)) {
         pts *= 2;
       }
 
@@ -881,128 +671,140 @@
     });
 
     if (tourPredictions === 0) {
-      saveAll();
-      buildMatchesUserUI();
-      updatePointsAndStatsUI();
-      status.innerText =
-        "Результаты матчей сохранены, но по сохранённым прогнозам расчёт невозможен (не хватает реальных счётов).";
+      document.getElementById("predictionsResult").innerText =
+        "Сначала введи прогноз хотя бы для одного открытого матча.";
       return;
     }
 
     userPoints += gainedPoints;
     totalTours++;
-    tickets += 1; // за тур — 1 билет
+    tickets += 1;
 
-    if (gainedPoints > bestTourPoints) {
-      bestTourPoints = gainedPoints;
-    }
+    predictionsSent = true;
+    document.getElementById("predictionsButton").disabled = true;
+    document.getElementById("predictionsResult").innerText =
+      "Тур сыгран (демо). Ты набрал " + gainedPoints + " очков.";
 
-    // очистим прогнозы на тур (следующий тур — новый набор)
-    savedTourPredictions = [];
-    tourSent = false;
-
-    saveAll();
-    buildMatchesUserUI();
-    buildMatchesAdminResultsUI();
-    rebuildTable();
+    saveAllBase();
+    saveMatches();
     updatePointsAndStatsUI();
     updateTicketsUI();
-
-    document.getElementById("predictionsButton").disabled = false;
-    document.getElementById("predictionsResult").innerText =
-      "Тур рассчитан. Ты набрал " + gainedPoints + " очков.";
-
-    status.innerText = "Результаты матчей сохранены и тур рассчитан.";
+    rebuildTable();
   }
 
-  function adminAddMatch() {
-    if (!isAdmin) return;
-    const home = document.getElementById("adminAddHome").value.trim();
-    const away = document.getElementById("adminAddAway").value.trim();
-    const dl   = document.getElementById("adminAddDeadline").value.trim();
+  // АДМИН: МАТЧИ
+  function buildAdminMatchesUI() {
+    const cont = document.getElementById("adminMatchesContainer");
+    cont.innerHTML = "";
+    matches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "admin-match";
+      div.innerHTML = `
+        <h4>${m.home} — ${m.away}</h4>
+        <p>
+          Реальный счёт:
+          <input type="number" id="adm-real-home-${m.id}" value="${m.realHome}" style="width:60px;">
+          :
+          <input type="number" id="adm-real-away-${m.id}" value="${m.realAway}" style="width:60px;">
+        </p>
+        <p>
+          Дедлайн:
+          <input id="adm-deadline-${m.id}" style="width:260px;" value="${m.deadline || ""}">
+        </p>
+        <button class="admin-small-btn" onclick="deleteMatch(${m.id})">❌ Удалить матч</button>
+      `;
+      cont.appendChild(div);
+    });
+  }
 
-    if (!home || !away || !dl) {
-      alert("Заполни дом, гостей и дедлайн.");
+  function saveAdminMatches() {
+    matches.forEach(m => {
+      const rh = document.getElementById(`adm-real-home-${m.id}`)?.value ?? "";
+      const ra = document.getElementById(`adm-real-away-${m.id}`)?.value ?? "";
+      const dl = document.getElementById(`adm-deadline-${m.id}`)?.value ?? "";
+
+      m.realHome = rh === "" ? m.realHome : parseInt(rh, 10);
+      m.realAway = ra === "" ? m.realAway : parseInt(ra, 10);
+      m.deadline = dl || "";
+    });
+    saveMatches();
+    buildMatchesUI();
+    alert("Матчи и дедлайны сохранены (локально).");
+  }
+
+  function deleteMatch(id) {
+    if (!confirm("Точно удалить этот матч из тура?")) return;
+    matches = matches.filter(m => m.id !== id);
+    saveMatches();
+    buildMatchesUI();
+    buildAdminMatchesUI();
+  }
+
+  function addMatch() {
+    const home = document.getElementById("adminNewHome").value.trim();
+    const away = document.getElementById("adminNewAway").value.trim();
+    const deadline = document.getElementById("adminNewDeadline").value.trim();
+    if (!home || !away) {
+      alert("Заполни команды.");
       return;
     }
-
-    const newId = matches.length ? Math.max(...matches.map(m => m.id)) + 1 : 1;
+    const newId = matches.length > 0 ? Math.max(...matches.map(m => m.id)) + 1 : 1;
     matches.push({
       id: newId,
       home,
       away,
-      deadline: dl,
-      realHome: null,
-      realAway: null
+      realHome: 0,
+      realAway: 0,
+      deadline
     });
-
-    saveAll();
-    buildMatchesUserUI();
-    buildMatchesAdminResultsUI();
-
-    document.getElementById("adminAddHome").value = "";
-    document.getElementById("adminAddAway").value = "";
-    document.getElementById("adminAddDeadline").value = "";
-
-    alert("Матч добавлен.");
+    document.getElementById("adminNewHome").value = "";
+    document.getElementById("adminNewAway").value = "";
+    document.getElementById("adminNewDeadline").value = "";
+    saveMatches();
+    buildMatchesUI();
+    buildAdminMatchesUI();
   }
 
-  // =============== НАГРАДЫ (логика для профиля) ===============
-  function rebuildRewardsList(accPercent) {
-    const container = document.getElementById("profileRewardsList");
-    const rewards = [];
+  // ТОЧНЫЙ УДАР
+  function updateStrikeUI() {
+    const activeBlock = document.getElementById("strikeActiveBlock");
+    const noMatch = document.getElementById("strikeNoMatch");
 
-    if (bestTourPoints >= 10) {
-      rewards.push("🎯 Очень сильный тур: " + bestTourPoints + " очков.");
-    }
-    if (totalTours >= 10) {
-      rewards.push("📅 Сыграно 10+ туров.");
-    }
-    if (totalTours >= 50) {
-      rewards.push("📅 Сыграно 50+ туров.");
-    }
-    if (totalTours >= 100) {
-      rewards.push("📅 Сыграно 100+ туров.");
-    }
-    if (accPercent >= 70 && totalPredictions >= 30) {
-      rewards.push("👑 Король исходов: точность 70%+.");
-    }
-
-    if (!rewards.length) {
-      container.innerHTML = "Пока нет наград — всё впереди! 💪";
+    if (!strikeConfig) {
+      activeBlock.style.display = "none";
+      noMatch.style.display = "block";
       return;
     }
 
-    container.innerHTML = "";
-    rewards.forEach(text => {
-      const p = document.createElement("p");
-      p.textContent = text;
-      container.appendChild(p);
-    });
-  }
+    activeBlock.style.display = "block";
+    noMatch.style.display = "none";
 
-  // =============== ТОЧНЫЙ УДАР ===============
-  function initStrikeMatchUI() {
     document.getElementById("strikeMatchTitle").innerText =
-      strikeMatch.home + " — " + strikeMatch.away;
+      strikeConfig.home + " — " + strikeConfig.away;
     document.getElementById("strikeMatchTime").innerText =
-      strikeMatch.timeText;
-    document.getElementById("strikeMatchDeadlineText").innerText =
-      "Дедлайн для ставок: " + strikeMatch.deadline;
+      strikeConfig.timeText || "";
+    document.getElementById("strikeDeadlineInfo").innerText =
+      strikeConfig.deadline
+        ? "Дедлайн ставок: " + strikeConfig.deadline
+        : "";
 
-    const now = new Date();
-    const dl = strikeMatch.deadline ? new Date(strikeMatch.deadline) : null;
-    const closed = dl && now > dl;
+    // заполняем админские поля, если он вошёл
+    if (adminLoggedIn) {
+      document.getElementById("admStrikeHome").value = strikeConfig.home;
+      document.getElementById("admStrikeAway").value = strikeConfig.away;
+      document.getElementById("admStrikeTimeText").value = strikeConfig.timeText || "";
+      document.getElementById("admStrikeDeadline").value = strikeConfig.deadline || "";
+    }
 
-    document.getElementById("strikeClosedMsg").style.display =
-      closed ? "block" : "none";
-    document.getElementById("strikeInputsBlock").style.display =
-      closed ? "none" : "block";
-
-    if (lastStrikeBet) {
-      updateLastStrikeInfo();
+    // последняя ставка
+    const last = strikeBets[strikeBets.length - 1];
+    const info = document.getElementById("strikeLastInfo");
+    if (!last) {
+      info.innerText = "";
     } else {
-      document.getElementById("lastStrikeInfo").innerText = "Пока нет ставок.";
+      info.innerHTML =
+        `Твоя последняя ставка: <span>${last.home}:${last.away}</span>, ` +
+        `ставка ${last.amount} ⭐`;
     }
   }
 
@@ -1014,27 +816,33 @@
       document.getElementById("strikeExactWin").innerText   = "0 ⭐";
       return;
     }
-
     const winOutcome = Math.floor(bet * 1.95);
     const winExact   = Math.floor(bet * 4.8);
-
     document.getElementById("strikeOutcomeWin").innerText = winOutcome + " ⭐";
     document.getElementById("strikeExactWin").innerText   = winExact   + " ⭐";
   }
 
   function makeStrikeBet() {
-    const status = document.getElementById("strikeStatus");
-
-    const now = new Date();
-    const dl = strikeMatch.deadline ? new Date(strikeMatch.deadline) : null;
-    if (dl && now > dl) {
-      status.innerText = "Дедлайн прошёл. Приём ставок закрыт.";
+    if (!strikeConfig) {
+      document.getElementById("strikeStatus").innerText =
+        "Матч для «Точного удара» ещё не выбран.";
       return;
+    }
+
+    if (strikeConfig.deadline) {
+      const now = new Date();
+      const dl = new Date(strikeConfig.deadline);
+      if (now >= dl) {
+        document.getElementById("strikeStatus").innerText =
+          "Дедлайн ставок на этот матч уже прошёл.";
+        return;
+      }
     }
 
     const homeStr = document.getElementById("strikeHome").value;
     const awayStr = document.getElementById("strikeAway").value;
     const betStr  = document.getElementById("strikeBet").value;
+    const status = document.getElementById("strikeStatus");
 
     const home = parseInt(homeStr || "-1", 10);
     const away = parseInt(awayStr || "-1", 10);
@@ -1056,63 +864,53 @@
     }
 
     balanceStars -= bet;
-
-    lastStrikeBet = {
-      match: strikeMatch.home + " — " + strikeMatch.away,
+    strikeBets.push({
+      match: strikeConfig.home + " — " + strikeConfig.away,
       home,
       away,
-      bet,
+      amount: bet,
       time: new Date().toISOString()
-    };
+    });
 
     status.innerText = "✅ Ставка принята. Ждём результат матча.";
-
     document.getElementById("strikeBet").value   = "";
     document.getElementById("strikeHome").value  = "";
     document.getElementById("strikeAway").value  = "";
     document.getElementById("strikeOutcomeWin").innerText = "0 ⭐";
     document.getElementById("strikeExactWin").innerText   = "0 ⭐";
 
-    updateLastStrikeInfo();
-    saveAll();
+    saveAllBase();
+    saveStrike();
     updateBalancesUI();
-  }
-
-  function updateLastStrikeInfo() {
-    if (!lastStrikeBet) {
-      document.getElementById("lastStrikeInfo").innerText = "Пока нет ставок.";
-      return;
-    }
-    document.getElementById("lastStrikeInfo").innerText =
-      `Матч: ${lastStrikeBet.match}, прогноз: ${lastStrikeBet.home}:${lastStrikeBet.away}, ставка: ${lastStrikeBet.bet} ⭐`;
+    updateStrikeUI();
   }
 
   function settleLastStrikeBet() {
     const status = document.getElementById("strikeSettleStatus");
-    if (!isAdmin) {
-      status.innerText = "Нет прав доступа.";
+    if (!strikeConfig) {
+      status.innerText = "Сначала задай матч.";
       return;
     }
-
-    if (!lastStrikeBet) {
+    if (strikeBets.length === 0) {
       status.innerText = "Нет ставок для расчёта.";
       return;
     }
 
     const realHomeStr = document.getElementById("strikeRealHome").value;
     const realAwayStr = document.getElementById("strikeRealAway").value;
-
     if (realHomeStr === "" || realAwayStr === "") {
-      status.innerText = "Введи фактический счёт.";
+      status.innerText = "Введи фактический счёт матча.";
       return;
     }
 
     const realHome = parseInt(realHomeStr, 10);
     const realAway = parseInt(realAwayStr, 10);
 
-    const betHome = lastStrikeBet.home;
-    const betAway = lastStrikeBet.away;
-    const amount  = lastStrikeBet.bet;
+    const bet = strikeBets[strikeBets.length - 1];
+
+    const betHome = bet.home;
+    const betAway = bet.away;
+    const amount  = bet.amount;
 
     const realDiff = realHome - realAway;
     const betDiff  = betHome - betAway;
@@ -1132,68 +930,76 @@
 
     if (win > 0) {
       balanceStars += win;
-      tickets += 1; // за выигрыш — билет
+      tickets += 1;
       status.innerText =
         `✅ Ставка рассчитана: ${type}. Выигрыш +${win} ⭐`;
     } else {
       status.innerText = "❌ Ставка не сыграла. Выигрыша нет.";
     }
 
-    lastStrikeBet = null; // одна ставка — один расчёт
-    localStorage.removeItem(KEY_LAST_STRIKE);
-
-    saveAll();
+    strikeBets.pop();
+    saveAllBase();
+    saveStrike();
     updateBalancesUI();
     updateTicketsUI();
-    updateLastStrikeInfo();
+    updateStrikeUI();
   }
 
-  function adminSaveStrikeMatch() {
-    if (!isAdmin) return;
+  function saveStrikeMatch() {
+    const home = document.getElementById("admStrikeHome").value.trim();
+    const away = document.getElementById("admStrikeAway").value.trim();
+    const timeText = document.getElementById("admStrikeTimeText").value.trim();
+    const deadline = document.getElementById("admStrikeDeadline").value.trim();
 
-    const h = document.getElementById("adminStrikeHome").value.trim();
-    const a = document.getElementById("adminStrikeAway").value.trim();
-    const t = document.getElementById("adminStrikeTimeText").value.trim();
-    const d = document.getElementById("adminStrikeDeadline").value.trim();
-
-    if (!h || !a || !t || !d) {
-      alert("Заполни дом, гостей, текст времени и дедлайн.");
+    if (!home || !away) {
+      alert("Заполни команды для матча.");
       return;
     }
 
-    strikeMatch = {
-      home: h,
-      away: a,
-      timeText: t,
-      deadline: d
+    strikeConfig = {
+      home,
+      away,
+      timeText,
+      deadline
     };
 
-    saveAll();
-    initStrikeMatchUI();
-    alert("Матч для точного удара обновлён.");
+    saveStrike();
+    updateStrikeUI();
+    alert("Матч для «Точного удара» сохранён (локально).");
   }
 
-  // =============== ИНИЦИАЛИЗАЦИЯ ===============
-  document.addEventListener("DOMContentLoaded", function () {
-    applyAdminVisibility();
+  function clearStrikeMatch() {
+    if (!confirm("Сбросить матч для «Точного удара»?")) return;
+    strikeConfig = null;
+    saveStrike();
+    updateStrikeUI();
+  }
 
+  // АДМИН - ВХОД
+  function adminLogin() {
+    const pass = document.getElementById("adminPasswordInput").value;
+    if (pass === "0235") {
+      adminLoggedIn = true;
+      document.getElementById("adminLoginError").innerText = "";
+      document.querySelectorAll(".admin-block").forEach(b => b.style.display = "block");
+      // обновляем админские UIs
+      buildAdminMatchesUI();
+      updateStrikeUI();
+      alert("Админ-режим включен.");
+    } else {
+      document.getElementById("adminLoginError").innerText = "Неверный пароль.";
+    }
+  }
+
+  // ИНИЦИАЛИЗАЦИЯ
+  document.addEventListener("DOMContentLoaded", function () {
     updateBalancesUI();
     updateClubUI();
     updateTicketsUI();
     updatePointsAndStatsUI();
+    buildMatchesUI();
     rebuildTable();
-
-    buildMatchesUserUI();
-    buildMatchesAdminResultsUI();
-
-    if (tourSent) {
-      const btn = document.getElementById("predictionsButton");
-      if (btn) btn.disabled = true;
-      document.getElementById("predictionsResult").innerText =
-        "Прогноз на текущий тур уже сохранён. Ждём расчёта.";
-    }
-
-    initStrikeMatchUI();
+    updateStrikeUI();
 
     if (favoriteClub) {
       document.getElementById("clubSelect").style.display = "none";
@@ -1203,5 +1009,6 @@
     }
   });
 </script>
+
 </body>
 </html>
