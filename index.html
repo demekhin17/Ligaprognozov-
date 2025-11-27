@@ -207,6 +207,7 @@
 <!-- ГЛАВНАЯ -->
 <div id="home" class="screen">
   <h2>Главная</h2>
+  <p>Ник: <span id="homeNick">—</span></p>
   <p>Любимый клуб: <span id="homeClub">—</span></p>
   <p>Твои очки: <span id="homePoints">0</span></p>
   <p>Твоё место: <span id="homePlace">—</span></p>
@@ -238,7 +239,7 @@
   <!-- АДМИН: МАТЧИ И РЕЗУЛЬТАТЫ -->
   <div id="adminMatchesBlock" class="admin-block">
     <h3>Админ: результаты матчей и дедлайны</h3>
-    <p class="note">Здесь ты задаёшь реальные счёты и дедлайны по каждому матчу тура.</p>
+    <p class="note">Задай реальные счёты и дедлайны по каждому матчу тура.</p>
     <div id="adminMatchesContainer"></div>
     <button onclick="saveAdminMatches()">💾 Сохранить результаты и дедлайны</button>
 
@@ -260,7 +261,7 @@
 <!-- ПРОФИЛЬ -->
 <div id="profile" class="screen">
   <h2>Твой профиль</h2>
-  <p>Ник: <b>bombardir17</b></p>
+  <p>Ник: <b id="profileNick"></b></p>
   <p>Любимый клуб: <span id="profileClub">—</span></p>
   <p>Очки: <span id="profilePoints">0</span></p>
   <p>Сыграно туров: <span id="profileTours">0</span></p>
@@ -299,7 +300,6 @@
       <li>«Король исходов» (топ по % исходов) <span class="badge">+5 билетов</span></li>
       <li>За выигрыш в режиме ставок на победу <span class="badge">+1 билет</span></li>
     </ul>
-    <p class="note">В этом MVP мы пока не считаем все ачивки автоматически — главное, что логика уже заложена. Позже перенесём на бэкенд.</p>
   </div>
 </div>
 
@@ -315,7 +315,7 @@
 
   <div id="strikeUserMatches"></div>
   <div id="strikeNoMatches" class="disabled-text" style="display:none;">
-    Админ ещё не добавил матчи для этого режима. Ждём объявление в лиге 🙂
+    Админ ещё не добавил матчи для этого режима.
   </div>
 
   <hr style="margin:15px 0;border-color:#444;">
@@ -324,8 +324,8 @@
   <div id="adminStrikeBlock" class="admin-block">
     <h3>Админ: матчи «Ставка на победу»</h3>
     <p class="note">
-      Здесь ты добавляешь матчи, задаёшь дедлайны и рассчитываешь исход.
-      Ничья = все ставки проиграли.
+      Добавляй матчи, задавай дедлайны и рассчитывай исход.
+      10% банка проигравшей стороны — твоя комиссия, 90% получают победители пропорционально ставке.
     </p>
 
     <div id="adminStrikeMatchesContainer"></div>
@@ -356,7 +356,20 @@
 </div>
 
 <script>
-  const currentUserName = "bombardir17";
+  // Определяем ник автоматически (Telegram WebApp, если есть)
+  let currentUserName = "Гость";
+  try {
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+      const u = tg.initDataUnsafe.user;
+      currentUserName =
+        u.username ||
+        (u.first_name + (u.last_name ? " " + u.last_name : "")) ||
+        "Игрок";
+    }
+  } catch (e) {
+    // если Telegram недоступен, остаётся "Гость"
+  }
 
   // КЛЮЧИ localStorage
   const KEY_CLUB           = "lp_v4_favoriteClub";
@@ -367,13 +380,13 @@
   const KEY_CORRECT_RES    = "lp_v4_correctResults";
   const KEY_TOURS          = "lp_v4_totalTours";
   const KEY_MATCHES        = "lp_v4_matches";
-  const KEY_STRIKE_MATCHES = "lp_v4_strikeMatches"; // новый ключ для режима ставок
+  const KEY_STRIKE_MATCHES = "lp_v4_strikeMatches";
 
   // СОСТОЯНИЕ
   let favoriteClub   = localStorage.getItem(KEY_CLUB) || null;
   let balanceStars   = parseInt(localStorage.getItem(KEY_STARS) || "0", 10);
   let tickets        = parseInt(localStorage.getItem(KEY_TICKETS) || "0", 10);
-  let userPoints     = parseInt(localStorage.getItem(KEY_USER_POINTS) || "27", 10);
+  let userPoints     = parseInt(localStorage.getItem(KEY_USER_POINTS) || "0", 10);
   let totalPredictions = parseInt(localStorage.getItem(KEY_TOTAL_PREDS) || "0", 10);
   let correctResults   = parseInt(localStorage.getItem(KEY_CORRECT_RES) || "0", 10);
   let totalTours       = parseInt(localStorage.getItem(KEY_TOURS) || "0", 10);
@@ -382,32 +395,7 @@
 
   // ===== МАТЧИ ТУРА (основная лига) =====
   function defaultMatches() {
-    return [
-      {
-        id: 1,
-        home: "Реал Мадрид",
-        away: "Олимпиакос",
-        realHome: 2,
-        realAway: 1,
-        deadline: "2025-11-26T11:00:00+03:00"
-      },
-      {
-        id: 2,
-        home: "Барселона",
-        away: "Манчестер Сити",
-        realHome: 3,
-        realAway: 2,
-        deadline: "2025-11-27T21:00:00+03:00"
-      },
-      {
-        id: 3,
-        home: "ПСЖ",
-        away: "Бавария",
-        realHome: 1,
-        realAway: 1,
-        deadline: "2025-11-28T21:00:00+03:00"
-      }
-    ];
+    return [];
   }
 
   let matches = null;
@@ -434,21 +422,8 @@
     strikeMatches = [];
   }
 
-  if (!Array.isArray(strikeMatches) || strikeMatches.length === 0) {
-    // пример матча по умолчанию
-    strikeMatches = [
-      {
-        id: 1,
-        home: "Барселона",
-        away: "Реал Мадрид",
-        timeText: "Сегодня, 21:45 (МСК)",
-        deadline: "2025-11-30T21:45:00+03:00",
-        totalHome: 0,
-        totalAway: 0,
-        bets: [],    // {user, side: 'home'|'away', amount}
-        settled: false
-      }
-    ];
+  if (!Array.isArray(strikeMatches)) {
+    strikeMatches = [];
   }
 
   function saveStrikeMatches() {
@@ -498,6 +473,11 @@
     document.getElementById("profileAccuracy").innerText = acc + "%";
   }
 
+  function updateNickUI() {
+    document.getElementById("homeNick").innerText    = currentUserName;
+    document.getElementById("profileNick").innerText = currentUserName;
+  }
+
   // ВЫБОР КЛУБА
   let tempSelectedClub = null;
   function selectClub(elem, clubName) {
@@ -517,33 +497,18 @@
     rebuildTable();
   }
 
-  // ТАБЛИЦА
-  const playersBase = [
-    { name: "bombardir17", points: userPoints, club: "Барселона", accuracy: 67, bestRound: "3 тур" },
-    { name: "kinggoals",   points: 18, club: "Реал Мадрид", accuracy: 42, bestRound: "1 тур" },
-    { name: "footlord",    points: 13, club: "ПСЖ", accuracy: 31, bestRound: "2 тур" },
-    { name: "predator",    points: 7,  club: "Манчестер Сити", accuracy: 21, bestRound: "1 тур" },
-    { name: "goalstorm",   points: 5,  club: "Барселона", accuracy: 10, bestRound: "-" },
-    { name: "xg_master",   points: 4,  club: "ПСЖ", accuracy: 9, bestRound: "-" },
-    { name: "clean_sheet", points: 3,  club: "Реал Мадрид", accuracy: 5, bestRound: "-" },
-    { name: "pressinggod", points: 2,  club: "Манчестер Сити", accuracy: 4, bestRound: "-" },
-    { name: "hat_trick",   points: 1,  club: "Интер Майами", accuracy: 3, bestRound: "-" },
-    { name: "latewinner",  points: 0,  club: "Барселона", accuracy: 0, bestRound: "-" }
-  ];
-
+  // ТАБЛИЦА — только текущий игрок
   function getPlayersForTable() {
-    const copy = playersBase.map(p => ({ ...p }));
-    const me = copy.find(p => p.name === currentUserName);
-    if (me) {
-      me.points = userPoints;
-      if (favoriteClub) me.club = favoriteClub;
-      const acc = totalPredictions > 0
-        ? Math.round((correctResults / totalPredictions) * 100)
-        : me.accuracy;
-      me.accuracy = acc;
-    }
-    copy.sort((a, b) => b.points - a.points);
-    return copy;
+    const acc = totalPredictions > 0
+      ? Math.round((correctResults / totalPredictions) * 100)
+      : 0;
+    return [{
+      name: currentUserName,
+      points: userPoints,
+      club: favoriteClub || "-",
+      accuracy: acc,
+      bestRound: "-"
+    }];
   }
 
   function rebuildTable() {
@@ -594,6 +559,13 @@
   function buildMatchesUI() {
     const container = document.getElementById("matchesList");
     container.innerHTML = "";
+    if (!matches.length) {
+      const p = document.createElement("p");
+      p.className = "disabled-text";
+      p.innerText = "Админ ещё не добавил матчи для этого тура.";
+      container.appendChild(p);
+      return;
+    }
     matches.forEach(m => {
       const open = isMatchOpen(m);
       const div = document.createElement("div");
@@ -627,7 +599,7 @@
   function submitPredictions() {
     if (predictionsSent) {
       document.getElementById("predictionsResult").innerText =
-        "Ты уже отправил прогноз на этот тур (демо).";
+        "Ты уже отправил прогноз на этот тур.";
       return;
     }
 
@@ -682,7 +654,7 @@
     predictionsSent = true;
     document.getElementById("predictionsButton").disabled = true;
     document.getElementById("predictionsResult").innerText =
-      "Тур сыгран (демо). Ты набрал " + gainedPoints + " очков.";
+      "Тур сыгран. Ты набрал " + gainedPoints + " очков.";
 
     saveAllBase();
     saveMatches();
@@ -694,6 +666,7 @@
   // АДМИН: МАТЧИ ОСНОВНОЙ ЛИГИ
   function buildAdminMatchesUI() {
     const cont = document.getElementById("adminMatchesContainer");
+    if (!cont) return;
     cont.innerHTML = "";
     matches.forEach(m => {
       const div = document.createElement("div");
@@ -702,9 +675,9 @@
         <h4>${m.home} — ${m.away}</h4>
         <p>
           Реальный счёт:
-          <input type="number" id="adm-real-home-${m.id}" value="${m.realHome}" style="width:60px;">
+          <input type="number" id="adm-real-home-${m.id}" value="${m.realHome ?? 0}" style="width:60px;">
           :
-          <input type="number" id="adm-real-away-${m.id}" value="${m.realAway}" style="width:60px;">
+          <input type="number" id="adm-real-away-${m.id}" value="${m.realAway ?? 0}" style="width:60px;">
         </p>
         <p>
           Дедлайн:
@@ -722,13 +695,13 @@
       const ra = document.getElementById(`adm-real-away-${m.id}`)?.value ?? "";
       const dl = document.getElementById(`adm-deadline-${m.id}`)?.value ?? "";
 
-      m.realHome = rh === "" ? m.realHome : parseInt(rh, 10);
-      m.realAway = ra === "" ? m.realAway : parseInt(ra, 10);
+      if (rh !== "") m.realHome = parseInt(rh, 10);
+      if (ra !== "") m.realAway = parseInt(ra, 10);
       m.deadline = dl || "";
     });
     saveMatches();
     buildMatchesUI();
-    alert("Матчи и дедлайны сохранены (локально).");
+    alert("Матчи и дедлайны сохранены.");
   }
 
   function deleteMatch(id) {
@@ -764,7 +737,7 @@
     buildAdminMatchesUI();
   }
 
-  // ===== РЕЖИМ "СТАВКА НА ПОБЕДУ" (бывший "Точный удар") =====
+  // ===== РЕЖИМ "СТАВКА НА ПОБЕДУ" =====
 
   function strikeIsOpen(match) {
     if (match.settled) return false;
@@ -779,16 +752,16 @@
     const noMatches = document.getElementById("strikeNoMatches");
     cont.innerHTML = "";
 
-    const active = strikeMatches.filter(m => true); // показываем все, но внутри отмечаем статус
+    const list = strikeMatches;
 
-    if (active.length === 0) {
+    if (!list.length) {
       noMatches.style.display = "block";
       return;
     } else {
       noMatches.style.display = "none";
     }
 
-    active.forEach(m => {
+    list.forEach(m => {
       const card = document.createElement("div");
       card.className = "strike-card";
 
@@ -800,12 +773,11 @@
 
       let statusHtml = "";
       if (!open && !m.settled) {
-        statusHtml = `<div class="disabled-text">Приём ставок закрыт. Ждём расчёт от админа.</div>`;
+        statusHtml = `<div class="disabled-text">Приём ставок закрыт. Ждём расчёт.</div>`;
       } else if (m.settled) {
         statusHtml = `<div class="disabled-text">Матч рассчитан. Ставки закрыты.</div>`;
       }
 
-      // последняя ставка текущего пользователя по этому матчу
       const myBets = (m.bets || []).filter(b => b.user === currentUserName);
       let lastText = "";
       if (myBets.length > 0) {
@@ -885,7 +857,9 @@
 
     let payout = amount;
     if (W > 0) {
-      payout = amount + (amount / W) * L;
+      const commission = Math.floor(L * 0.10);
+      const Lafter = L - commission;
+      payout = amount + (amount / W) * Lafter;
     }
 
     outEl.innerText = Math.floor(payout) + " ⭐";
@@ -915,7 +889,6 @@
       return;
     }
 
-    // списываем звёзды и записываем ставку
     balanceStars -= amount;
     match.bets = match.bets || [];
     match.bets.push({
@@ -1042,7 +1015,7 @@
     const totalAway = m.totalAway || 0;
 
     if (!resultSide) {
-      // ничья: все проиграли
+      // ничья: все проиграли, комиссия не берётся
       m.settled = true;
       m.bets = [];
       m.totalHome = 0;
@@ -1058,7 +1031,6 @@
     const L = resultSide === "home" ? totalAway : totalHome;
 
     if (W <= 0) {
-      // теоретически не должно быть, но на всякий случай
       m.settled = true;
       m.bets = [];
       m.totalHome = 0;
@@ -1070,19 +1042,23 @@
       return;
     }
 
-    // Простая честная формула: ставка + доля от проигравших
+    const commission = Math.floor(L * 0.10);
+    const Lafter = L - commission;
+
     let totalPayoutForUser = 0;
     (m.bets || []).forEach(b => {
       if (b.side === resultSide) {
-        const payout = Math.floor(b.amount + (b.amount / W) * L);
+        const payout = Math.floor(b.amount + (b.amount / W) * Lafter);
         if (b.user === currentUserName) {
           totalPayoutForUser += payout;
         }
       }
     });
 
-    if (totalPayoutForUser > 0) {
-      balanceStars += totalPayoutForUser;
+    const totalGain = totalPayoutForUser + commission;
+
+    if (totalGain > 0) {
+      balanceStars += totalGain;
       saveAllBase();
       updateBalancesUI();
     }
@@ -1096,7 +1072,7 @@
     buildStrikeUserUI();
     buildAdminStrikeUI();
 
-    alert("Матч рассчитан. Если у тебя были выигрышные ставки, звёзды уже добавлены на баланс.");
+    alert("Матч рассчитан. Выигрыш и комиссия начислены на баланс.");
   }
 
   // АДМИН - ВХОД
@@ -1116,6 +1092,7 @@
 
   // ИНИЦИАЛИЗАЦИЯ
   document.addEventListener("DOMContentLoaded", function () {
+    updateNickUI();
     updateBalancesUI();
     updateClubUI();
     updateTicketsUI();
