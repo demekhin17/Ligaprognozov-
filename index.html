@@ -155,6 +155,26 @@
       font-size: 13px;
       color: #bbb;
     }
+    .strike-card {
+      text-align: left;
+      max-width: 430px;
+      margin: 0 auto 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #34495e;
+      background: #16202a;
+    }
+    .strike-header {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .strike-bank {
+      font-size: 13px;
+      margin: 4px 0;
+    }
+    .strike-form-row {
+      margin: 4px 0;
+    }
   </style>
 </head>
 <body>
@@ -167,7 +187,7 @@
   <button onclick="openScreen('predictions')">Прогноз</button>
   <button onclick="openScreen('profile')">Профиль</button>
   <button onclick="openScreen('rewards')">Награды</button>
-  <button onclick="openScreen('strike')">🎯 Точный удар</button>
+  <button onclick="openScreen('strike')">⭐ Ставка на победу</button>
 </div>
 
 <!-- ВЫБОР КЛУБА -->
@@ -277,82 +297,53 @@
       <li>«Идеальный тур по исходам» <span class="badge">+3 билета</span></li>
       <li>«10 туров» / «50 туров» / «100 туров» <span class="badge">+1 / +3 / +5</span></li>
       <li>«Король исходов» (топ по % исходов) <span class="badge">+5 билетов</span></li>
-      <li>За выигрыш в режиме «Точный удар» <span class="badge">+1 билет</span></li>
+      <li>За выигрыш в режиме ставок на победу <span class="badge">+1 билет</span></li>
     </ul>
     <p class="note">В этом MVP мы пока не считаем все ачивки автоматически — главное, что логика уже заложена. Позже перенесём на бэкенд.</p>
   </div>
 </div>
 
-<!-- ТОЧНЫЙ УДАР -->
+<!-- РЕЖИМ: СТАВКА НА ПОБЕДУ -->
 <div id="strike" class="screen">
-  <h2>🎯 Точный удар</h2>
+  <h2>⭐ Ставка на победу</h2>
 
   <p>Баланс: <b><span id="strikeStars">0</span> ⭐</b></p>
+  <p class="note">
+    Ставишь звёзды на победу одной из команд. Ничья = ставка проиграла.
+    Чем больше звёзд ставят на соперника, тем больше можешь выиграть ты.
+  </p>
 
-  <div id="strikeActiveBlock">
-    <h3 id="strikeMatchTitle"></h3>
-    <p id="strikeMatchTime"></p>
-    <p id="strikeDeadlineInfo" class="note"></p>
-
-    <p>
-      Твой прогноз счёта:
-      <input type="number" id="strikeHome" min="0" placeholder="Дом">
-      :
-      <input type="number" id="strikeAway" min="0" placeholder="Гости">
-    </p>
-
-    <p>
-      Сумма ставки (⭐):
-      <input type="number" id="strikeBet" min="0" oninput="updateStrikePotential()">
-    </p>
-
-    <p>Минимальная ставка: 10 ⭐</p>
-
-    <p>💰 Выигрыш при исходе: <b><span id="strikeOutcomeWin">0 ⭐</span></b></p>
-    <p>🎯 Выигрыш при точном счёте: <b><span id="strikeExactWin">0 ⭐</span></b></p>
-
-    <button onclick="makeStrikeBet()">Сделать ставку</button>
-    <p id="strikeStatus"></p>
-
-    <div class="strike-last" id="strikeLastInfo"></div>
-  </div>
-
-  <div id="strikeNoMatch" class="disabled-text" style="display:none;">
-    Админ ещё не выбрал матч для «Точного удара». Ждём объявление в лиге 🙂
+  <div id="strikeUserMatches"></div>
+  <div id="strikeNoMatches" class="disabled-text" style="display:none;">
+    Админ ещё не добавил матчи для этого режима. Ждём объявление в лиге 🙂
   </div>
 
   <hr style="margin:15px 0;border-color:#444;">
 
-  <!-- АДМИН: ТОЧНЫЙ УДАР -->
+  <!-- АДМИН: УПРАВЛЕНИЕ МАТЧАМИ СТАВОК -->
   <div id="adminStrikeBlock" class="admin-block">
-    <h3>Админ: «Точный удар»</h3>
-    <p class="note">Здесь ты настраиваешь матч, дедлайн и считаешь последнюю ставку.</p>
+    <h3>Админ: матчи «Ставка на победу»</h3>
+    <p class="note">
+      Здесь ты добавляешь матчи, задаёшь дедлайны и рассчитываешь исход.
+      Ничья = все ставки проиграли.
+    </p>
 
-    <h4>Матч и дедлайн</h4>
+    <div id="adminStrikeMatchesContainer"></div>
+
+    <h4 style="margin-top:18px;">Добавить матч</h4>
     <p>
-      Дом: <input id="admStrikeHome" style="width:120px;">
-      Гости: <input id="admStrikeAway" style="width:120px;">
+      Дом: <input id="admStrikeNewHome" style="width:120px;">
+      Гости: <input id="admStrikeNewAway" style="width:120px;">
     </p>
     <p>
       Описание времени (для текста на экране):<br>
-      <input id="admStrikeTimeText" style="width:260px;" placeholder="Например: Сегодня, 21:45 (МСК)">
+      <input id="admStrikeNewTimeText" style="width:260px;" placeholder="Например: Сегодня, 21:45 (МСК)">
     </p>
     <p>
-      Дедлайн (формат 2025-11-30T21:45:00+03:00):<br>
-      <input id="admStrikeDeadline" style="width:260px;">
+      Дедлайн ставок (формат 2025-11-30T21:45:00+03:00):<br>
+      <input id="admStrikeNewDeadline" style="width:260px;">
     </p>
-    <button onclick="saveStrikeMatch()">💾 Сохранить матч</button>
-    <button class="admin-small-btn" onclick="clearStrikeMatch()">❌ Сбросить матч</button>
-
-    <h4 style="margin-top:18px;">Расчёт последней ставки</h4>
-    <p>
-      Фактический счёт:
-      <input type="number" id="strikeRealHome" min="0" placeholder="Дом">
-      :
-      <input type="number" id="strikeRealAway" min="0" placeholder="Гости">
-    </p>
-    <button onclick="settleLastStrikeBet()">Рассчитать последнюю ставку</button>
-    <p id="strikeSettleStatus"></p>
+    <button onclick="adminAddStrikeMatch()">➕ Добавить матч</button>
   </div>
 </div>
 
@@ -376,8 +367,7 @@
   const KEY_CORRECT_RES    = "lp_v4_correctResults";
   const KEY_TOURS          = "lp_v4_totalTours";
   const KEY_MATCHES        = "lp_v4_matches";
-  const KEY_STRIKE_CONFIG  = "lp_v4_strikeConfig";
-  const KEY_STRIKE_BETS    = "lp_v4_strikeBets";
+  const KEY_STRIKE_MATCHES = "lp_v4_strikeMatches"; // новый ключ для режима ставок
 
   // СОСТОЯНИЕ
   let favoriteClub   = localStorage.getItem(KEY_CLUB) || null;
@@ -390,7 +380,7 @@
 
   let adminLoggedIn = false;
 
-  // Матчи тура
+  // ===== МАТЧИ ТУРА (основная лига) =====
   function defaultMatches() {
     return [
       {
@@ -435,20 +425,34 @@
     localStorage.setItem(KEY_MATCHES, JSON.stringify(matches));
   }
 
-  // Конфиг точного удара
-  let strikeConfig = null;
+  // ===== МАТЧИ РЕЖИМА "СТАВКА НА ПОБЕДУ" =====
+  let strikeMatches = [];
   try {
-    const sc = localStorage.getItem(KEY_STRIKE_CONFIG);
-    strikeConfig = sc ? JSON.parse(sc) : null;
+    const sm = localStorage.getItem(KEY_STRIKE_MATCHES);
+    strikeMatches = sm ? JSON.parse(sm) : [];
   } catch (e) {
-    strikeConfig = null;
+    strikeMatches = [];
   }
-  let strikeBets = [];
-  try {
-    const sb = localStorage.getItem(KEY_STRIKE_BETS);
-    strikeBets = sb ? JSON.parse(sb) : [];
-  } catch (e) {
-    strikeBets = [];
+
+  if (!Array.isArray(strikeMatches) || strikeMatches.length === 0) {
+    // пример матча по умолчанию
+    strikeMatches = [
+      {
+        id: 1,
+        home: "Барселона",
+        away: "Реал Мадрид",
+        timeText: "Сегодня, 21:45 (МСК)",
+        deadline: "2025-11-30T21:45:00+03:00",
+        totalHome: 0,
+        totalAway: 0,
+        bets: [],    // {user, side: 'home'|'away', amount}
+        settled: false
+      }
+    ];
+  }
+
+  function saveStrikeMatches() {
+    localStorage.setItem(KEY_STRIKE_MATCHES, JSON.stringify(strikeMatches));
   }
 
   // ОБЩЕЕ
@@ -460,11 +464,6 @@
     localStorage.setItem(KEY_TOTAL_PREDS, String(totalPredictions));
     localStorage.setItem(KEY_CORRECT_RES, String(correctResults));
     localStorage.setItem(KEY_TOURS, String(totalTours));
-  }
-
-  function saveStrike() {
-    localStorage.setItem(KEY_STRIKE_CONFIG, JSON.stringify(strikeConfig));
-    localStorage.setItem(KEY_STRIKE_BETS, JSON.stringify(strikeBets));
   }
 
   function openScreen(id) {
@@ -584,7 +583,7 @@
     openScreen("playerModal");
   }
 
-  // ПРОГНОЗЫ
+  // ПРОГНОЗЫ (основная лига)
   function isMatchOpen(m) {
     if (!m.deadline) return true;
     const now = new Date();
@@ -636,7 +635,7 @@
     let tourPredictions = 0;
 
     matches.forEach(m => {
-      if (!isMatchOpen(m)) return; // на закрытый матч прогноз не принимаем
+      if (!isMatchOpen(m)) return;
 
       const hStr = document.getElementById(`pred-home-${m.id}`)?.value ?? "";
       const aStr = document.getElementById(`pred-away-${m.id}`)?.value ?? "";
@@ -692,7 +691,7 @@
     rebuildTable();
   }
 
-  // АДМИН: МАТЧИ
+  // АДМИН: МАТЧИ ОСНОВНОЙ ЛИГИ
   function buildAdminMatchesUI() {
     const cont = document.getElementById("adminMatchesContainer");
     cont.innerHTML = "";
@@ -765,214 +764,339 @@
     buildAdminMatchesUI();
   }
 
-  // ТОЧНЫЙ УДАР
-  function updateStrikeUI() {
-    const activeBlock = document.getElementById("strikeActiveBlock");
-    const noMatch = document.getElementById("strikeNoMatch");
+  // ===== РЕЖИМ "СТАВКА НА ПОБЕДУ" (бывший "Точный удар") =====
 
-    if (!strikeConfig) {
-      activeBlock.style.display = "none";
-      noMatch.style.display = "block";
+  function strikeIsOpen(match) {
+    if (match.settled) return false;
+    if (!match.deadline) return true;
+    const now = new Date();
+    const dl = new Date(match.deadline);
+    return now < dl;
+  }
+
+  function buildStrikeUserUI() {
+    const cont = document.getElementById("strikeUserMatches");
+    const noMatches = document.getElementById("strikeNoMatches");
+    cont.innerHTML = "";
+
+    const active = strikeMatches.filter(m => true); // показываем все, но внутри отмечаем статус
+
+    if (active.length === 0) {
+      noMatches.style.display = "block";
       return;
-    }
-
-    activeBlock.style.display = "block";
-    noMatch.style.display = "none";
-
-    document.getElementById("strikeMatchTitle").innerText =
-      strikeConfig.home + " — " + strikeConfig.away;
-    document.getElementById("strikeMatchTime").innerText =
-      strikeConfig.timeText || "";
-    document.getElementById("strikeDeadlineInfo").innerText =
-      strikeConfig.deadline
-        ? "Дедлайн ставок: " + strikeConfig.deadline
-        : "";
-
-    // заполняем админские поля, если он вошёл
-    if (adminLoggedIn) {
-      document.getElementById("admStrikeHome").value = strikeConfig.home;
-      document.getElementById("admStrikeAway").value = strikeConfig.away;
-      document.getElementById("admStrikeTimeText").value = strikeConfig.timeText || "";
-      document.getElementById("admStrikeDeadline").value = strikeConfig.deadline || "";
-    }
-
-    // последняя ставка
-    const last = strikeBets[strikeBets.length - 1];
-    const info = document.getElementById("strikeLastInfo");
-    if (!last) {
-      info.innerText = "";
     } else {
-      info.innerHTML =
-        `Твоя последняя ставка: <span>${last.home}:${last.away}</span>, ` +
-        `ставка ${last.amount} ⭐`;
-    }
-  }
-
-  function updateStrikePotential() {
-    const betStr = document.getElementById("strikeBet").value;
-    const bet = parseFloat(betStr || "0");
-    if (bet <= 0) {
-      document.getElementById("strikeOutcomeWin").innerText = "0 ⭐";
-      document.getElementById("strikeExactWin").innerText   = "0 ⭐";
-      return;
-    }
-    const winOutcome = Math.floor(bet * 1.95);
-    const winExact   = Math.floor(bet * 4.8);
-    document.getElementById("strikeOutcomeWin").innerText = winOutcome + " ⭐";
-    document.getElementById("strikeExactWin").innerText   = winExact   + " ⭐";
-  }
-
-  function makeStrikeBet() {
-    if (!strikeConfig) {
-      document.getElementById("strikeStatus").innerText =
-        "Матч для «Точного удара» ещё не выбран.";
-      return;
+      noMatches.style.display = "none";
     }
 
-    if (strikeConfig.deadline) {
-      const now = new Date();
-      const dl = new Date(strikeConfig.deadline);
-      if (now >= dl) {
-        document.getElementById("strikeStatus").innerText =
-          "Дедлайн ставок на этот матч уже прошёл.";
-        return;
+    active.forEach(m => {
+      const card = document.createElement("div");
+      card.className = "strike-card";
+
+      const totalHome = m.totalHome || 0;
+      const totalAway = m.totalAway || 0;
+      const bank = totalHome + totalAway;
+
+      const open = strikeIsOpen(m);
+
+      let statusHtml = "";
+      if (!open && !m.settled) {
+        statusHtml = `<div class="disabled-text">Приём ставок закрыт. Ждём расчёт от админа.</div>`;
+      } else if (m.settled) {
+        statusHtml = `<div class="disabled-text">Матч рассчитан. Ставки закрыты.</div>`;
       }
-    }
 
-    const homeStr = document.getElementById("strikeHome").value;
-    const awayStr = document.getElementById("strikeAway").value;
-    const betStr  = document.getElementById("strikeBet").value;
-    const status = document.getElementById("strikeStatus");
+      // последняя ставка текущего пользователя по этому матчу
+      const myBets = (m.bets || []).filter(b => b.user === currentUserName);
+      let lastText = "";
+      if (myBets.length > 0) {
+        const last = myBets[myBets.length - 1];
+        const teamName = last.side === "home" ? m.home : m.away;
+        lastText = `Твоя последняя ставка: ${last.amount} ⭐ на победу «${teamName}»`;
+      }
 
-    const home = parseInt(homeStr || "-1", 10);
-    const away = parseInt(awayStr || "-1", 10);
-    const bet  = parseFloat(betStr || "0");
+      card.innerHTML = `
+        <div class="strike-header">${m.home} — ${m.away}</div>
+        <div class="note">${m.timeText || ""}</div>
+        <div class="note">Дедлайн ставок: ${m.deadline || "не задан"}</div>
+        <div class="strike-bank">
+          На ${m.home}: <b>${totalHome}</b> ⭐<br>
+          На ${m.away}: <b>${totalAway}</b> ⭐<br>
+          Общий банк: <b>${bank}</b> ⭐
+        </div>
+        ${statusHtml}
+        <div id="strike-form-${m.id}"></div>
+        <div class="strike-last" id="strike-last-${m.id}">${lastText}</div>
+      `;
 
-    if (isNaN(home) || isNaN(away) || home < 0 || away < 0) {
-      status.innerText = "Сначала введи прогноз счёта.";
-      return;
-    }
+      cont.appendChild(card);
 
-    if (bet < 10) {
-      status.innerText = "Минимальная ставка: 10 ⭐";
-      return;
-    }
+      const formContainer = document.getElementById(`strike-form-${m.id}`);
 
-    if (bet > balanceStars) {
-      status.innerText = "Недостаточно звёзд. Баланс: " + balanceStars + " ⭐";
-      return;
-    }
-
-    balanceStars -= bet;
-    strikeBets.push({
-      match: strikeConfig.home + " — " + strikeConfig.away,
-      home,
-      away,
-      amount: bet,
-      time: new Date().toISOString()
+      if (open) {
+        formContainer.innerHTML = `
+          <div class="strike-form-row">
+            Сторона:
+            <select id="strike-side-${m.id}">
+              <option value="home">Победа ${m.home}</option>
+              <option value="away">Победа ${m.away}</option>
+            </select>
+          </div>
+          <div class="strike-form-row">
+            Сумма ставки (⭐):
+            <input type="number" id="strike-amount-${m.id}" min="10" style="width:80px;" oninput="updateStrikePotential(${m.id})">
+          </div>
+          <div class="strike-form-row note">
+            Минимальная ставка: 10 ⭐
+          </div>
+          <div class="strike-form-row">
+            Примерный выигрыш сейчас: <b><span id="strike-potential-${m.id}">0 ⭐</span></b>
+          </div>
+          <button onclick="makeStrikeBet(${m.id})">Сделать ставку</button>
+          <p id="strike-status-${m.id}" class="note"></p>
+        `;
+      }
     });
-
-    status.innerText = "✅ Ставка принята. Ждём результат матча.";
-    document.getElementById("strikeBet").value   = "";
-    document.getElementById("strikeHome").value  = "";
-    document.getElementById("strikeAway").value  = "";
-    document.getElementById("strikeOutcomeWin").innerText = "0 ⭐";
-    document.getElementById("strikeExactWin").innerText   = "0 ⭐";
-
-    saveAllBase();
-    saveStrike();
-    updateBalancesUI();
-    updateStrikeUI();
   }
 
-  function settleLastStrikeBet() {
-    const status = document.getElementById("strikeSettleStatus");
-    if (!strikeConfig) {
-      status.innerText = "Сначала задай матч.";
+  function updateStrikePotential(matchId) {
+    const match = strikeMatches.find(m => m.id === matchId);
+    if (!match) return;
+
+    const amountStr = document.getElementById(`strike-amount-${matchId}`)?.value || "0";
+    const amount = parseFloat(amountStr);
+    const side = document.getElementById(`strike-side-${matchId}`)?.value || "home";
+    const outEl = document.getElementById(`strike-potential-${matchId}`);
+
+    if (!outEl) return;
+
+    if (amount <= 0 || isNaN(amount)) {
+      outEl.innerText = "0 ⭐";
       return;
     }
-    if (strikeBets.length === 0) {
-      status.innerText = "Нет ставок для расчёта.";
-      return;
-    }
 
-    const realHomeStr = document.getElementById("strikeRealHome").value;
-    const realAwayStr = document.getElementById("strikeRealAway").value;
-    if (realHomeStr === "" || realAwayStr === "") {
-      status.innerText = "Введи фактический счёт матча.";
-      return;
-    }
-
-    const realHome = parseInt(realHomeStr, 10);
-    const realAway = parseInt(realAwayStr, 10);
-
-    const bet = strikeBets[strikeBets.length - 1];
-
-    const betHome = bet.home;
-    const betAway = bet.away;
-    const amount  = bet.amount;
-
-    const realDiff = realHome - realAway;
-    const betDiff  = betHome - betAway;
-    const realRes = realDiff === 0 ? 0 : (realDiff > 0 ? 1 : -1);
-    const betRes  = betDiff === 0 ? 0 : (betDiff > 0 ? 1 : -1);
-
-    let win = 0;
-    let type = "проигрыш";
-
-    if (betHome === realHome && betAway === realAway) {
-      win = Math.floor(amount * 4.8);
-      type = "ТОЧНЫЙ СЧЁТ";
-    } else if (betRes === realRes) {
-      win = Math.floor(amount * 1.95);
-      type = "исход";
-    }
-
-    if (win > 0) {
-      balanceStars += win;
-      tickets += 1;
-      status.innerText =
-        `✅ Ставка рассчитана: ${type}. Выигрыш +${win} ⭐`;
+    let W, L;
+    if (side === "home") {
+      W = (match.totalHome || 0) + amount;
+      L = match.totalAway || 0;
     } else {
-      status.innerText = "❌ Ставка не сыграла. Выигрыша нет.";
+      W = (match.totalAway || 0) + amount;
+      L = match.totalHome || 0;
     }
 
-    strikeBets.pop();
-    saveAllBase();
-    saveStrike();
-    updateBalancesUI();
-    updateTicketsUI();
-    updateStrikeUI();
+    let payout = amount;
+    if (W > 0) {
+      payout = amount + (amount / W) * L;
+    }
+
+    outEl.innerText = Math.floor(payout) + " ⭐";
   }
 
-  function saveStrikeMatch() {
-    const home = document.getElementById("admStrikeHome").value.trim();
-    const away = document.getElementById("admStrikeAway").value.trim();
-    const timeText = document.getElementById("admStrikeTimeText").value.trim();
-    const deadline = document.getElementById("admStrikeDeadline").value.trim();
+  function makeStrikeBet(matchId) {
+    const match = strikeMatches.find(m => m.id === matchId);
+    if (!match) return;
+
+    if (!strikeIsOpen(match)) {
+      const st = document.getElementById(`strike-status-${matchId}`);
+      if (st) st.innerText = "Ставки на этот матч уже закрыты.";
+      return;
+    }
+
+    const amountStr = document.getElementById(`strike-amount-${matchId}`)?.value || "0";
+    const side = document.getElementById(`strike-side-${matchId}`)?.value || "home";
+    const statusEl = document.getElementById(`strike-status-${matchId}`);
+
+    const amount = parseFloat(amountStr);
+    if (isNaN(amount) || amount < 10) {
+      if (statusEl) statusEl.innerText = "Минимальная ставка — 10 ⭐.";
+      return;
+    }
+    if (amount > balanceStars) {
+      if (statusEl) statusEl.innerText = "Недостаточно звёзд. Твой баланс: " + balanceStars + " ⭐.";
+      return;
+    }
+
+    // списываем звёзды и записываем ставку
+    balanceStars -= amount;
+    match.bets = match.bets || [];
+    match.bets.push({
+      user: currentUserName,
+      side,
+      amount
+    });
+    if (side === "home") {
+      match.totalHome = (match.totalHome || 0) + amount;
+    } else {
+      match.totalAway = (match.totalAway || 0) + amount;
+    }
+
+    saveAllBase();
+    saveStrikeMatches();
+    updateBalancesUI();
+    buildStrikeUserUI();
+
+    const st = document.getElementById(`strike-status-${matchId}`);
+    if (st) st.innerText = "✅ Ставка принята.";
+  }
+
+  // АДМИН: РЕЖИМ СТАВОК
+  function buildAdminStrikeUI() {
+    const cont = document.getElementById("adminStrikeMatchesContainer");
+    if (!cont) return;
+    cont.innerHTML = "";
+
+    strikeMatches.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "admin-match";
+
+      const bank = (m.totalHome || 0) + (m.totalAway || 0);
+      const statusText = m.settled ? "рассчитан" : (strikeIsOpen(m) ? "открыт" : "дедлайн прошёл, ждёт расчёт");
+
+      div.innerHTML = `
+        <h4>${m.home} — ${m.away}</h4>
+        <p>${m.timeText || ""}</p>
+        <p>Дедлайн: ${m.deadline || "не задан"}</p>
+        <p>Поставлено: ${m.totalHome || 0} ⭐ на ${m.home}, ${m.totalAway || 0} ⭐ на ${m.away}</p>
+        <p>Общий банк: ${bank} ⭐</p>
+        <p>Статус: <b>${statusText}</b></p>
+        <p>
+          Счёт матча:
+          <input type="number" id="adm-strike-real-home-${m.id}" style="width:60px;" placeholder="Дом">
+          :
+          <input type="number" id="adm-strike-real-away-${m.id}" style="width:60px;" placeholder="Гости">
+        </p>
+        <button onclick="adminSettleStrikeMatch(${m.id})">Рассчитать матч</button>
+        <button class="admin-small-btn" onclick="adminDeleteStrikeMatch(${m.id})">❌ Удалить матч</button>
+      `;
+      cont.appendChild(div);
+    });
+  }
+
+  function adminAddStrikeMatch() {
+    const home = document.getElementById("admStrikeNewHome").value.trim();
+    const away = document.getElementById("admStrikeNewAway").value.trim();
+    const timeText = document.getElementById("admStrikeNewTimeText").value.trim();
+    const deadline = document.getElementById("admStrikeNewDeadline").value.trim();
 
     if (!home || !away) {
-      alert("Заполни команды для матча.");
+      alert("Заполни названия команд.");
       return;
     }
 
-    strikeConfig = {
+    const newId = strikeMatches.length > 0 ? Math.max(...strikeMatches.map(m => m.id)) + 1 : 1;
+    strikeMatches.push({
+      id: newId,
       home,
       away,
       timeText,
-      deadline
-    };
+      deadline,
+      totalHome: 0,
+      totalAway: 0,
+      bets: [],
+      settled: false
+    });
 
-    saveStrike();
-    updateStrikeUI();
-    alert("Матч для «Точного удара» сохранён (локально).");
+    document.getElementById("admStrikeNewHome").value = "";
+    document.getElementById("admStrikeNewAway").value = "";
+    document.getElementById("admStrikeNewTimeText").value = "";
+    document.getElementById("admStrikeNewDeadline").value = "";
+
+    saveStrikeMatches();
+    buildStrikeUserUI();
+    buildAdminStrikeUI();
   }
 
-  function clearStrikeMatch() {
-    if (!confirm("Сбросить матч для «Точного удара»?")) return;
-    strikeConfig = null;
-    saveStrike();
-    updateStrikeUI();
+  function adminDeleteStrikeMatch(id) {
+    if (!confirm("Удалить матч из режима ставок?")) return;
+    strikeMatches = strikeMatches.filter(m => m.id !== id);
+    saveStrikeMatches();
+    buildStrikeUserUI();
+    buildAdminStrikeUI();
+  }
+
+  function adminSettleStrikeMatch(id) {
+    const m = strikeMatches.find(x => x.id === id);
+    if (!m) return;
+
+    if (m.settled) {
+      alert("Этот матч уже рассчитан.");
+      return;
+    }
+
+    const rhStr = document.getElementById(`adm-strike-real-home-${id}`)?.value || "";
+    const raStr = document.getElementById(`adm-strike-real-away-${id}`)?.value || "";
+
+    if (rhStr === "" || raStr === "") {
+      alert("Введи фактический счёт матча.");
+      return;
+    }
+
+    const rh = parseInt(rhStr, 10);
+    const ra = parseInt(raStr, 10);
+    let resultSide = null; // 'home' | 'away' | null (ничья)
+
+    if (rh > ra) resultSide = "home";
+    else if (ra > rh) resultSide = "away";
+    else resultSide = null; // ничья = все проиграли
+
+    const totalHome = m.totalHome || 0;
+    const totalAway = m.totalAway || 0;
+
+    if (!resultSide) {
+      // ничья: все проиграли
+      m.settled = true;
+      m.bets = [];
+      m.totalHome = 0;
+      m.totalAway = 0;
+      saveStrikeMatches();
+      buildStrikeUserUI();
+      buildAdminStrikeUI();
+      alert("Ничья: все ставки проиграли.");
+      return;
+    }
+
+    const W = resultSide === "home" ? totalHome : totalAway;
+    const L = resultSide === "home" ? totalAway : totalHome;
+
+    if (W <= 0) {
+      // теоретически не должно быть, но на всякий случай
+      m.settled = true;
+      m.bets = [];
+      m.totalHome = 0;
+      m.totalAway = 0;
+      saveStrikeMatches();
+      buildStrikeUserUI();
+      buildAdminStrikeUI();
+      alert("На победившую команду не было ставок, распределять нечего.");
+      return;
+    }
+
+    // Простая честная формула: ставка + доля от проигравших
+    let totalPayoutForUser = 0;
+    (m.bets || []).forEach(b => {
+      if (b.side === resultSide) {
+        const payout = Math.floor(b.amount + (b.amount / W) * L);
+        if (b.user === currentUserName) {
+          totalPayoutForUser += payout;
+        }
+      }
+    });
+
+    if (totalPayoutForUser > 0) {
+      balanceStars += totalPayoutForUser;
+      saveAllBase();
+      updateBalancesUI();
+    }
+
+    m.settled = true;
+    m.bets = [];
+    m.totalHome = 0;
+    m.totalAway = 0;
+
+    saveStrikeMatches();
+    buildStrikeUserUI();
+    buildAdminStrikeUI();
+
+    alert("Матч рассчитан. Если у тебя были выигрышные ставки, звёзды уже добавлены на баланс.");
   }
 
   // АДМИН - ВХОД
@@ -982,9 +1106,8 @@
       adminLoggedIn = true;
       document.getElementById("adminLoginError").innerText = "";
       document.querySelectorAll(".admin-block").forEach(b => b.style.display = "block");
-      // обновляем админские UIs
       buildAdminMatchesUI();
-      updateStrikeUI();
+      buildAdminStrikeUI();
       alert("Админ-режим включен.");
     } else {
       document.getElementById("adminLoginError").innerText = "Неверный пароль.";
@@ -999,7 +1122,7 @@
     updatePointsAndStatsUI();
     buildMatchesUI();
     rebuildTable();
-    updateStrikeUI();
+    buildStrikeUserUI();
 
     if (favoriteClub) {
       document.getElementById("clubSelect").style.display = "none";
