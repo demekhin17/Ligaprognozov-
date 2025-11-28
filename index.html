@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Лига Прогнозистов</title>
 
-  <!-- Скрипт Telegram WebApp -->
+  <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
@@ -280,7 +280,7 @@
   <p>Билеты: <span id="profileTickets">0</span></p>
 </div>
 
-<!-- ПРОФИЛЬ ИГРОКА ИЗ ТАБЛИЦЫ -->
+<!-- ПРОФИЛЬ ИГРОКА -->
 <div id="playerModal" class="screen">
   <h2>Профиль игрока</h2>
   <p>Ник: <span id="pmNick"></span></p>
@@ -329,7 +329,7 @@
 
   <hr style="margin:15px 0;border-color:#444;">
 
-  <!-- АДМИН: УПРАВЛЕНИЕ МАТЧАМИ СТАВОК -->
+  <!-- АДМИН: МАТЧИ СТАВОК -->
   <div id="adminStrikeBlock" class="admin-block">
     <h3>Админ: матчи «Ставка на победу»</h3>
     <p class="note">
@@ -365,11 +365,11 @@
 </div>
 
 <script>
-  // Telegram WebApp
+  // ==== Telegram WebApp / Ник ====
   let tg = null;
   let currentUserName = "Гость";
 
-  // КЛЮЧИ localStorage
+  // Ключи localStorage
   const KEY_CLUB           = "lp_v4_favoriteClub";
   const KEY_STARS          = "lp_v4_balanceStars";
   const KEY_TICKETS        = "lp_v4_tickets";
@@ -380,7 +380,7 @@
   const KEY_MATCHES        = "lp_v4_matches";
   const KEY_STRIKE_MATCHES = "lp_v4_strikeMatches";
 
-  // СОСТОЯНИЕ
+  // Состояние
   let favoriteClub   = localStorage.getItem(KEY_CLUB) || null;
   let balanceStars   = parseInt(localStorage.getItem(KEY_STARS) || "0", 10);
   let tickets        = parseInt(localStorage.getItem(KEY_TICKETS) || "0", 10);
@@ -391,7 +391,7 @@
 
   let adminLoggedIn = false;
 
-  // ===== МАТЧИ ТУРА (основная лига) =====
+  // ===== Матчи основной лиги =====
   function defaultMatches() {
     return [];
   }
@@ -411,7 +411,7 @@
     localStorage.setItem(KEY_MATCHES, JSON.stringify(matches));
   }
 
-  // ===== МАТЧИ РЕЖИМА "СТАВКА НА ПОБЕДУ" =====
+  // ===== Матчи "Ставка на победу" =====
   let strikeMatches = [];
   try {
     const sm = localStorage.getItem(KEY_STRIKE_MATCHES);
@@ -427,7 +427,7 @@
     localStorage.setItem(KEY_STRIKE_MATCHES, JSON.stringify(strikeMatches));
   }
 
-  // ОБЩЕЕ
+  // Общие сохранения/UI
   function saveAllBase() {
     localStorage.setItem(KEY_CLUB, favoriteClub || "");
     localStorage.setItem(KEY_STARS, String(balanceStars));
@@ -475,7 +475,7 @@
     document.getElementById("profileNick").innerText = currentUserName;
   }
 
-  // ВЫБОР КЛУБА
+  // Выбор клуба
   let tempSelectedClub = null;
   function selectClub(elem, clubName) {
     document.querySelectorAll(".club-btn").forEach(c => c.classList.remove("club-selected"));
@@ -494,7 +494,7 @@
     rebuildTable();
   }
 
-  // ТАБЛИЦА — только текущий игрок
+  // Таблица — один игрок (текущий)
   function getPlayersForTable() {
     const acc = totalPredictions > 0
       ? Math.round((correctResults / totalPredictions) * 100)
@@ -545,7 +545,7 @@
     openScreen("playerModal");
   }
 
-  // ПРОГНОЗЫ (основная лига)
+  // Прогнозы основной лиги
   function isMatchOpen(m) {
     if (!m.deadline) return true;
     const now = new Date();
@@ -660,7 +660,7 @@
     rebuildTable();
   }
 
-  // АДМИН: МАТЧИ ОСНОВНОЙ ЛИГИ
+  // Админ: матчи основной лиги
   function buildAdminMatchesUI() {
     const cont = document.getElementById("adminMatchesContainer");
     if (!cont) return;
@@ -734,8 +734,7 @@
     buildAdminMatchesUI();
   }
 
-  // ===== РЕЖИМ "СТАВКА НА ПОБЕДУ" =====
-
+  // ===== Режим "Ставка на победу" =====
   function strikeIsOpen(match) {
     if (match.settled) return false;
     if (!match.deadline) return true;
@@ -908,7 +907,7 @@
     if (st) st.innerText = "✅ Ставка принята.";
   }
 
-  // АДМИН: РЕЖИМ СТАВОК
+  // Админ: управление ставками
   function buildAdminStrikeUI() {
     const cont = document.getElementById("adminStrikeMatchesContainer");
     if (!cont) return;
@@ -1072,22 +1071,18 @@
     alert("Матч рассчитан. Выигрыш и комиссия начислены на баланс.");
   }
 
-  // ===== ПОПОЛНЕНИЕ / ВЫВОД ЗВЁЗД =====
+  // ===== Пополнение / вывод звёзд (интеграция с ботом) =====
   function topupStars() {
-    let amountStr = prompt("На сколько ⭐ пополнить баланс?");
+    const amountStr = prompt("На сколько ⭐ пополнить баланс?");
     if (!amountStr) return;
-    let amount = parseInt(amountStr, 10);
+    const amount = parseInt(amountStr, 10);
     if (isNaN(amount) || amount <= 0) {
       alert("Введи корректное число звёзд.");
       return;
     }
 
     if (!tg) {
-      // Открыто не из Telegram — демо-режим
-      balanceStars += amount;
-      saveAllBase();
-      updateBalancesUI();
-      alert("Демо: баланс увеличен локально на " + amount + " ⭐.");
+      alert("Открой мини-приложение через Telegram, чтобы пополнить баланс.");
       return;
     }
 
@@ -1095,29 +1090,20 @@
       type: "topup_request",
       amount: amount
     }));
-
-    alert("Запрос на пополнение отправлен боту. Он откроет оплату, если всё настроено.");
+    alert("Запрос на пополнение отправлен. Следуй инструкциям бота.");
   }
 
   function withdrawStars() {
-    let amountStr = prompt("Сколько ⭐ хочешь вывести?");
+    const amountStr = prompt("Сколько ⭐ хочешь вывести?");
     if (!amountStr) return;
-    let amount = parseInt(amountStr, 10);
+    const amount = parseInt(amountStr, 10);
     if (isNaN(amount) || amount <= 0) {
       alert("Введи корректное число звёзд.");
       return;
     }
 
     if (!tg) {
-      // Демо-режим вне Telegram
-      if (amount > balanceStars) {
-        alert("Недостаточно звёзд для вывода.");
-        return;
-      }
-      balanceStars -= amount;
-      saveAllBase();
-      updateBalancesUI();
-      alert("Демо: баланс уменьшен локально на " + amount + " ⭐.");
+      alert("Открой мини-приложение через Telegram, чтобы отправить заявку на вывод.");
       return;
     }
 
@@ -1125,11 +1111,10 @@
       type: "withdraw_request",
       amount: amount
     }));
-
-    alert("Заявка на вывод отправлена админу. Он свяжется с тобой в личке.");
+    alert("Заявка на вывод отправлена админу.");
   }
 
-  // АДМИН - ВХОД
+  // Админ — вход
   function adminLogin() {
     const pass = document.getElementById("adminPasswordInput").value;
     if (pass === "0235") {
@@ -1144,7 +1129,7 @@
     }
   }
 
-  // ИНИЦИАЛИЗАЦИЯ
+  // Инициализация
   document.addEventListener("DOMContentLoaded", function () {
     // Telegram init + ник
     try {
